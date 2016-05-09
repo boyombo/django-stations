@@ -1,0 +1,307 @@
+{% load static from staticfiles %}
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+{% block head %}
+    {% block meta %}
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    {% endblock meta %}
+    <!--[if IE]>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <![endif]-->
+    {% block title %}
+      <title>Alpha-Reports</title>
+    {% endblock title %}
+
+    {% block css %}
+    <!-- BOOTSTRAP CORE STYLE CSS -->
+    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet" type="text/css" />
+     <!-- FONTAWESOME STYLE CSS -->
+     <link href="{% static 'css/font-awesome.css' %}" rel="stylesheet" type="text/css" />
+    <!-- CUSTOM STYLE CSS -->
+    <link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css" />
+    
+    {% endblock css %}
+{% block extra-css %}{% endblock extra-css %}
+
+{% endblock head %}
+{% block extra-head %}{% endblock extra-head %}
+</head>
+<body > 
+  {% block body %}
+
+        <div class="navbar navbar-inverse navbar-fixed-top " >
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/" ><strong style=""></strong> Alpha <i class="fa fa-globe"></i> <small >Reports</small></a>
+            </div>
+            <div class="navbar-collapse collapse move-me">
+                <ul class="nav navbar-nav navbar-right set-links">
+                  {% block navigation %}
+                  <li><a id="home-menu" href="{% url 'show_list' %}" class="active-menu-item">stations</a></li>
+                  <li><a id="batch-menu" href="{% url 'add_entry' %}">entry</a></li>
+                  {% endblock navigation %}
+                </ul>
+            </div>
+
+        </div>
+    </div>
+    <!--MENU SECTION END-->
+    {% block start %}
+    <section id="home-sec">
+        <div class="overlay text-center">
+            <h1>Alpha Reps Reports</h1>
+            <hr class="hr-set"/>
+            <p>Easily report on Sales activities</p>
+        </div>
+    </section>
+    {% endblock start %}
+    <!--HOME SECTION END-->
+
+    <section id="search-domain" >
+        {% block messages %}
+        {% if messages %}
+                {% for message in messages %}
+                <div class="alert{% if message.tags %} alert-{{ message.tags }}{% endif %}">{{ message }}</div>
+                {% endfor %}
+        {% endif %}
+        {% endblock messages %}
+    {% block middle %}
+        <div class="container">
+            <div class="row">
+<div class="col-md-8">
+        <input type="text" class="form-control input-cls"    />
+
+</div>
+                <div class="col-md-4">
+                    <input type="button" class="btn btn-info btn-lg btn-set"  value="SEARCH DOMAIN" />
+                </div>
+            </div>
+        </div>
+    {% endblock middle %}
+    </section>
+     <!--SEARCH SECTION END-->
+     
+     {% block services %}
+    <section id="services-sec">
+        <div class="container">
+           
+            <div class="row text-center" >
+<div class="col-md-4">
+    <i class="fa fa-database fa-5x icon-custom-1 color-1"></i>
+    <h3>Any Exam</h3>
+    <p>
+        Load data for any exam
+        All we require is that it is in Multiple choice format.
+    </p>
+
+</div>
+                <div class="col-md-4">
+                     <i class="fa fa-globe fa-5x icon-custom-1 color-1"></i>
+    <h3>Access Anywhere </h3>
+                     <p>
+        Access your tests anywhere
+        in the world.
+    </p>
+                </div>
+                <div class="col-md-4">
+                     <i class="fa fa-desktop fa-5x icon-custom-1 color-1"></i>
+    <h3>Any Platform</h3>
+                     <p>
+        Consume the data in any platform
+        including computers, tablets and phones
+    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% endblock services %}
+    <!--SERVICES SECTION END-->
+    {% comment %}
+	   <section id="clients-sec">
+        <div class="container">
+            <div class="row">
+<div class="col-md-12">
+    <img src="{% static 'img/clients.png' %}" alt="" class="img-rounded img-responsive" />
+</div>
+
+               
+            </div>
+        </div>
+    </section>
+    <!--CLIENTS SECTION END-->
+    <div id="testimonial-sec">
+
+   
+        <div class="container">
+              <div class="row ">
+            <div class="col-md-12">
+                <div id="carousel-example" class="carousel slide" data-ride="carousel">
+
+                    <ol class="carousel-indicators">
+                        <li data-target="#carousel-example" data-slide-to="0" class="active"></li>
+                        <li data-target="#carousel-example" data-slide-to="1"></li>
+                        <li data-target="#carousel-example" data-slide-to="2"></li>
+                    </ol>
+
+                    <div class="carousel-inner">
+                        <div class="item active">
+                            <div class="container center">
+                                <div class="col-md-6 col-md-offset-3 slide-custom">
+                                   
+                                    <h4><i class="fa fa-quote-left"></i> Lorem ipsum dolor sit amet, consectetur adipiscing elit onec molestie non sem vel condimentum. <i class="fa fa-quote-right"></i></h4>
+                                     <div class="user-img pull-right">
+                                         <img src="{% static 'img/user.gif' %}" alt="" class="img-u image-responsive"  />
+					</div>
+                                    <h5 class="pull-right"><strong class="c-black">Lorem Dolor</strong></h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="container center">
+                                <div class="col-md-6 col-md-offset-3 slide-custom">
+                                    <h4> <i class="fa fa-quote-left"></i> Aenean faucibus luctus enim. Duis quis sem risu suspend lacinia elementum nunc. <i class="fa fa-quote-right"></i></h4>
+                                         <div class="user-img pull-right">
+                                             <img src="{% static 'img/user2.png' %}" alt="" class="img-u image-responsive"  />
+					</div>
+                                    <h5 class="pull-right"><strong class="c-black">Faucibus luctus</strong></h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item">
+                            <div class="container center">
+                                <div class="col-md-6 col-md-offset-3 slide-custom">
+                                    <h4><i class="fa fa-quote-left"></i>Sed ultricies, libero ut adipiscing a egestas dui metus a arcu condimentum. <i class="fa fa-quote-right"></i></h4>
+                                        <div class="user-img pull-right">
+                                            <img src="{% static 'img/user.gif' %}" alt="" class="img-u image-responsive"  />
+					</div>
+                                    <h5 class="pull-right"><strong class="c-black">Sed ultricies</strong></h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+         </div>
+    <!--TESTIMONIAL SECTION END-->
+    {% endcomment %}
+
+    {% block features %}
+    <section id="features-sec"  >
+        <div class="container">
+           
+            <div class="row text-center" >
+<div class="col-md-3">
+    <i class="fa fa-comments-o fa-3x icon-custom-2 color-2"></i>
+    <h4>24x7 SUPPORT</h4>
+    <p>
+        Nunc at viverra risus. 
+        In euismod quam ac dictum varius. 
+    </p>
+
+</div>
+                <div class="col-md-3">
+                     <i class="fa fa-rocket fa-3x icon-custom-2 color-2"></i>
+    <h4>Ultra Fast </h4>
+                     <p>
+        Nunc at viverra risus. 
+        In euismod quam ac dictum varius. 
+    </p>
+                </div>
+                <div class="col-md-3">
+                     <i class="fa fa-bars fa-3x icon-custom-2 color-2"></i>
+    <h4>Fast Response</h4>
+                     <p>
+        Nunc at viverra risus. 
+        In euismod quam ac dictum varius. 
+    </p>
+                </div>
+                <div class="col-md-3">
+                     <i class="fa fa-table fa-3x icon-custom-2 color-2"></i>
+    <h4>Customizable</h4>
+                     <p>
+        Nunc at viverra risus. 
+        In euismod quam ac dictum varius. 
+    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    {% endblock features %}
+     <!--FEATURES SECTION END-->
+     {% comment %}
+    <section id="clients-sec">
+        <div class="container">
+            <div class="row">
+<div class="col-md-12">
+    <img src="{% static 'img/clients.png' %}" alt="" class="img-rounded img-responsive" />
+</div>
+
+               
+            </div>
+        </div>
+    </section>
+    <!--CLIENTS SECTION END-->
+    {% endcomment %}
+
+    {% block footer %}
+    <section id="footer-sec" >
+        <div class="container">
+            <div class="row">
+<div class="col-md-12">
+   <h4>INSTRUCTIONS</h4>
+    <p style="padding-right:50px;">
+        Nunc at viverra risus. 
+        In euismod quam ac dictum varius.
+         Nunc at viverra risus. 
+        In euismod quam ac dictum varius.
+         Nunc at viverra risus. 
+        In euismod quam ac dictum varius.
+         Nunc at viverra risus. 
+         Nunc at viverra risus. <a href="about.html">more..</a>
+    </p>
+</div>
+            </div>
+               
+        </div>
+    </section>
+    
+    {% endblock footer %}
+     <!--FOOTER SECTION END-->
+    <div class="copy-txt">
+         <div class="container">
+        <div class="row">
+<div class="col-md-12 set-foot" >
+    &copy 2016 Basementlabs.com.ng | All rights reserved | Design by : <a href="http://www.binarytheme.com" target="_blank" style="color:#7C7C7C;">binarytheme.com</a> 
+</div>
+            </div>
+                   </div>
+    </div>
+     <!-- COPY TEXT SECTION END-->
+    {% block js %}
+    <!-- JAVASCRIPT FILES PLACED AT THE BOTTOM TO REDUCE THE LOADING TIME  -->
+    <!-- CORE JQUERY  -->
+    <script type="text/javascript" src="{% static 'js/jquery-1.11.1.js' %}"></script>
+    <!-- BOOTSTRAP SCRIPTS  -->
+    <script type="text/javascript" src="{% static 'js/bootstrap.js' %}"></script>
+    <!-- CUSTOM SCRIPTS  -->
+    <script type="text/javascript" src="{% static 'js/custom.js' %}"></script>
+    <script type="text/javascript">
+    $('.alert-error').attr('class', 'alert-danger');
+    </script>
+    {% endblock js %}
+    {% block extra-js %}{% endblock extra-js %}
+    {% endblock body %}
+</body>
+</html>

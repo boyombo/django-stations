@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load static from staticfiles %}
+
+{% block extra-css %}
+<link href="{% static 'css/dataTables.bootstrap.css' %}" rel="stylesheet">
+<link href="{% static 'css/dataTables.responsive.css' %}" rel="stylesheet">
+{% endblock extra-css %}
+
+{% block pageheader %}
+    <h1 class="page-header">Stations</h1>
+{% endblock pageheader %}
+
+{% block panelheader %}
+List of Stations
+{% endblock panelheader %}
+
+{% block panelbody %}
+<div class="dataTable_wrapper">
+    <div class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+        <div class="row">
+            <div class="col-sm-6">
+            </div>
+            <div class="col-sm-6">
+                <div class="dataTables_filter">
+                    <form method="get" action="">
+                        <label>Search:
+                            <input type="text" class="form-control input-sm" />
+                        </label>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+<div class="table-responsive">
+    <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+         <thead>
+             <tr>
+                 <th>Brand</th>
+                 <th>Address</th>
+                 <th>Vehicles</th>
+                 <th>Price</th>
+                 <th>Kegs?</th>
+                 <th>Time</th>
+                 <th>Update</th>
+             </tr>
+         </thead>
+         <tbody>
+         <tr>
+             <td>Mobil</td>
+             <td>Magodo, Long bridge</td>
+             <td>10-20</td>
+             <td>86.5</td>
+             <td>No</td>
+             <td>5 mins ago</td>
+             <td><a href=""><i class="fa fa-edit fa-fw"></i>update</a></td>
+         </tbody>
+     </table>
+ </div>
+ </div>
+{% endblock panelbody %}
+
+{% block extra-js %}
+<script type="text/javascript" src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
+{% endblock extra-js %}

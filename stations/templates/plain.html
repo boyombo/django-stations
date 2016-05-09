@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block start %}
+    <section class="headline-sec">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}             </li>
+        {% endfor %}
+    </ul>
+        {% endif %}
+        <div class="overlay ">
+            {% block pageheader %}
+            <h3 >BLANK PAGE <i class="fa fa-angle-double-right "></i></h3>
+            {% endblock pageheader %}
+
+        </div>
+    </section>
+{% endblock start %}
