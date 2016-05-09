@@ -15,7 +15,13 @@ Including another URLconf
 """
 from django.conf.urls import url
 from django.contrib import admin
+from depot import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^$', views.station_list, name='show_list'),
+    url(r'add/(?P<station_id>\d+)/$', views.add_entry, name='update'),
+    url(r'station/$', views.add_station, name='add_station'),
 ]
+
+admin.site.site_header = 'Stations admin'

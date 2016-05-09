@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load static from staticfiles %}
+
+
+{% block pageheader %}
+    <h1 class="page-header">Stations</h1>
+{% endblock pageheader %}
+
+{% block panelheader %}
+Add Station
+{% endblock panelheader %}
+
+{% block panelbody %}
+<div class="row">
+    <div class="col-lg-6">
+        <form action="" method="post" role="form">{% csrf_token %}
+            {% if form.non_field_errors %}
+                {% for error in form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="form-group">
+                {% if form.brand.errors %}
+                    <div class="alert alert-danger">
+                        {{ form.brand.errors }}
+                    </div>
+                {% endif %}
+                <label for="{{ form.brand.id_for_label }}" class="control-label">Brand</label>
+                {{ form.brand }}
+            </div>
+
+            <div class="form-group">
+                {% if form.address.errors %}
+                    <div class="alert alert-danger">
+                        {{ form.address.errors }}
+                    </div>
+                {% endif %}
+                <label for="{{ form.address.id_for_label }}" class="control-label">Address</label>
+                {{ form.address }}
+            </div>
+
+            <div class="form-group">
+                {% if form.area.errors %}
+                    <div class="alert alert-danger">
+                        {{ form.area.errors }}
+                    </div>
+                {% endif %}
+                <label for="{{ form.area.id_for_label }}" class="control-label">Area</label>
+                {{ form.area }}
+                <p class="help-block">Enter words to describe the area separated by commas. e.g. Magodo,Express</p>
+            </div>
+                <input type="submit" value="Save" class="btn btn-primary btn-lg" />
+
+        </form>
+    </div>
+</div>
+{% endblock panelbody %}
+
+{% block extra-js %}
+<script type="text/javascript">
+    $('#id_brand').addClass('form-control')
+    $('#id_address').addClass('form-control')
+    $('#id_area').addClass('form-control')
+</script>
+{% endblock extra-js %}

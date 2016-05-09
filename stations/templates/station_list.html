@@ -24,7 +24,7 @@ List of Stations
                 <div class="dataTables_filter">
                     <form method="get" action="">
                         <label>Search:
-                            <input type="text" class="form-control input-sm" />
+                            {{ form.name }}
                         </label>
                     </form>
                 </div>
@@ -37,14 +37,31 @@ List of Stations
              <tr>
                  <th>Brand</th>
                  <th>Address</th>
+                 <th>Wrong?</th>
                  <th>Vehicles</th>
                  <th>Price</th>
                  <th>Kegs?</th>
                  <th>Time</th>
-                 <th>Update</th>
              </tr>
          </thead>
          <tbody>
+         {% for station in station_list %}
+         <tr>
+             <td>{{ station.brand }}</td>
+             <td>{{ station.address }}</td>
+             <td><a href="{% url 'update' station.id %}"><i class="fa fa-edit fa-fw"></i>update</a></td>
+             {% if station.recent %}
+             <td>{{ station.recent.get_num_cars_display }}</td>
+             <td>{{ station.recent.fuel_price|default:"N/A" }}</td>
+             <td>{{ station.recent.kegs|yesno }}</td>
+             <td>{{ station.recent.current_time|timesince }}</td>
+             {% else %}
+             <td>N/A</td>
+             <td>N/A</td>
+             <td>N/A</td>
+             <td>N/A</td>
+             {% endif %}
+         {% endfor %}
          <tr>
              <td>Mobil</td>
              <td>Magodo, Long bridge</td>
@@ -62,4 +79,7 @@ List of Stations
 {% block extra-js %}
 <script type="text/javascript" src="{% static 'js/jquery.dataTables.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
+<script type="text/javascript">
+$('#id_name').addClass('form-control');
+</script>
 {% endblock extra-js %}

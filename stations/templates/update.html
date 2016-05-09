@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load static from staticfiles %}
+
+
+{% block pageheader %}
+    <h1 class="page-header">Update</h1>
+{% endblock pageheader %}
+
+{% block panelheader %}
+Update Fuel situation for <strong>{{ station.brand }}</strong> @({{ station.address }})
+{% endblock panelheader %}
+
+{% block panelbody %}
+<div class="row">
+    <div class="col-lg-6">
+        <form action="" method="post" role="form">{% csrf_token %}
+            {% if form.non_field_errors %}
+                {% for error in form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="form-group">
+                {% if form.num_cars.errors %}
+                    <div class="alert alert-danger">
+                        {{ form.num_cars.errors }}
+                    </div>
+                {% endif %}
+                <label for="{{ form.num_cars.id_for_label }}" class="control-label">Num Cars</label>
+                {{ form.num_cars }}
+                <p class="help-block">About how many cars are in line?</p>
+            </div>
+
+            <div class="form-group">
+                {% if form.fuel_price.errors %}
+                    <div class="alert alert-danger">
+                        {{ form.fuel_price.errors }}
+                    </div>
+                {% endif %}
+                <label for="{{ form.fuel_price.id_for_label }}" class="control-label">Fuel Price</label>
+                {{ form.fuel_price }}
+            </div>
+
+            <div class="form-group">
+            <div class="checkbox">
+                 <label for="{{ form.kegs.id_for_label }}" class="control-label">
+                     
+                    {{ form.kegs }}
+                     Do they sell in Kegs?</label>
+            </div>
+                </div>
+                <input type="submit" value="Save" class="btn btn-primary btn-lg" />
+
+        </form>
+    </div>
+</div>
+{% endblock panelbody %}
+
+{% block extra-js %}
+<script type="text/javascript">
+    $('#id_num_cars').addClass('form-control')
+    $('#id_fuel_price').addClass('form-control')
+</script>
+{% endblock extra-js %}

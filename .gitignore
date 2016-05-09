@@ -15,6 +15,7 @@ media/
 
 # temp files
 *.py~
+*/*.py~
 *~
 */*~
 .DS_Store
