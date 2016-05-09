@@ -137,7 +137,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 try:
-    from llocal_settings import DEV_DEBUG
+    from local_settings import DEV_DEBUG
     DEBUG = DEV_DEBUG
 except ImportError:
     pass
