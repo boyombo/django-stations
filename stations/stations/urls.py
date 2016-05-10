@@ -13,7 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.contrib import admin
 from depot import views
 
@@ -22,6 +22,7 @@ urlpatterns = [
     url(r'^$', views.station_list, name='show_list'),
     url(r'add/(?P<station_id>\d+)/$', views.add_entry, name='update'),
     url(r'station/$', views.add_station, name='add_station'),
+    url(r'api/', include('api.urls'),),
 ]
 
 admin.site.site_header = 'Stations admin'
