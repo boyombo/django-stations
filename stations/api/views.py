@@ -17,10 +17,11 @@ def get_stations(request):
             }
         recent = stn.recent
         if recent:
+            #kegs = 'Yes' if recent.kegs else 'No'
             data.update({
                 'num_cars': recent.get_num_cars_display(),
-                'fuel_price': str(recent.fuel_price),
-                'kegs': recent.kegs,
+                'fuel_price': str(recent.fuel_price) or 'N/A',
+                'kegs': 'Yes' if recent.kegs else 'No',
                 'time': recent.current_time.strftime('%Y-%m-%d %H:%M:%S')
             })
         stations.append(data)
