@@ -7,7 +7,14 @@ from depot.models import Station
 def get_stations(request):
     stations = []
     for stn in Station.objects.all():
-        data = {'name': stn.brand.name, 'address': stn.address}
+        data = {
+            'name': stn.brand.name,
+            'address': stn.address,
+            'num_cars': 'N/A',
+            'fuel_price': 'N/A',
+            'kegs': 'N/A',
+            'time': 'N/A'
+            }
         recent = stn.recent
         if recent:
             data.update({
