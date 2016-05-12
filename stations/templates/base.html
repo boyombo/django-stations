@@ -22,6 +22,15 @@
     <!-- CUSTOM STYLE CSS -->
     <link href="{% static 'css/sb-admin-2.css' %}" rel="stylesheet" type="text/css" />
     {% endblock css %}
+    <style>
+      .navbar-brand {
+        float: left;
+        font-size: 18px;
+        height: 80px;
+        line-height: 20px;
+        padding: 5px;
+      }
+    </style>
 
     {% block extra-css %}{% endblock extra-css %}
 
@@ -49,7 +58,8 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="/">Fuel Finder</a>
+                <a class="navbar-brand" class="pull-left" href="/"><img src="{% static 'img/logo.png' %}"/></a>
+                <a class="navbar-brand" class="pull-left" href="/"><h3>Fuel Finder</h3></a>
             </div>
             <!-- /.navbar-header -->
 
