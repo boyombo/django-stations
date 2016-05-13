@@ -4,12 +4,20 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 
 from depot.models import Station
-from depot.forms import EntryForm
+from depot.forms import EntryForm, APISearchForm
 
 
 def get_stations(request):
-    stations = []
-    for stn in Station.objects.all():
+    stations = Station.objects.all()
+    form = APISearchForm(request.GET)
+    if form.is_valid():
+        name = form.cleaned_data['name']
+        state = form.cleaned_data['state']
+        stations = stations.filter(
+            area__name__icontains=name,
+            state__tag__iexact=state)
+    output = []
+    for stn in stations:
         data = {
             'station_id': stn.id,
             'name': stn.brand.name,
@@ -28,9 +36,8 @@ def get_stations(request):
                 'kegs': 'Yes' if recent.kegs else 'No',
                 'time': recent.current_time.strftime('%Y-%m-%d %H:%M:%S')
             })
-        stations.append(data)
-    output = json.dumps(stations)
-    return HttpResponse(output)
+        output.append(data)
+    return HttpResponse(json.dumps(output))
 
 
 @csrf_exempt

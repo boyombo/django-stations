@@ -1,9 +1,9 @@
 from django.contrib import admin
 
-from depot.models import Brand, Area, Station, Entry
+from depot.models import Brand, Area, Station, Entry, State
 
 
-@admin.register(Brand, Area)
+@admin.register(Brand, Area, State)
 class BrandAdmin(admin.ModelAdmin):
     list_display = ['name']
 

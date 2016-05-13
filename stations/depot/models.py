@@ -6,6 +6,9 @@ from django.db import models
 
 class State(models.Model):
     name = models.CharField(max_length=200, unique=True)
+    tag = models.CharField(
+        'Name of the state in small letters and with spaces changed to _',
+        max_length=200, null=True, blank=True)
 
     def __unicode__(self):
         return self.name

@@ -9,11 +9,17 @@ def add_station(request):
     if request.method == 'POST':
         form = StationForm(request.POST)
         if form.is_valid():
-            brand_name = form.cleaned_data['brand']
+            brand_name = form.cleaned_data['brand'].upper()
             address = form.cleaned_data['address']
+            state = form.cleaned_data['state']
             #area = form.cleaned_data['area']
-            brand, _ = Brand.objects.get_or_create(name=brand_name)
-            station = Station.objects.create(brand=brand, address=address)
+            try:
+                brand = Brand.objects.get(name=brand_name)
+            except Brand.DoesNotExist:
+                brand = Brand.objects.create(name=brand_name)
+            #brand, _ = Brand.objects.get_or_create(name=brand_name)
+            station = Station.objects.create(
+                brand=brand, address=address, state=state)
             for name in form.cleaned_data['area']:
                 area, _ = Area.objects.get_or_create(name=name)
                 station.area.add(area)
