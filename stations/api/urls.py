@@ -4,4 +4,5 @@ from api import views
 
 urlpatterns = [
     url(r'stations/$', views.get_stations, name='api_stations'),
+    url(r'entry/(?P<station_id>\d+)/$', views.make_entry, name='api_entry'),
 ]

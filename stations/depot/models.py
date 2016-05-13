@@ -4,6 +4,13 @@ from datetime import datetime
 from django.db import models
 
 
+class State(models.Model):
+    name = models.CharField(max_length=200, unique=True)
+
+    def __unicode__(self):
+        return self.name
+
+
 class Brand(models.Model):
     name = models.CharField(max_length=200, unique=True)
 
@@ -22,6 +29,7 @@ class Station(models.Model):
     brand = models.ForeignKey(Brand)
     address = models.CharField(max_length=250)
     area = models.ManyToManyField(Area, related_name='station_areas')
+    state = models.ForeignKey(State, null=True, blank=True)
     longitude = models.FloatField(null=True, blank=True)
     latitude = models.FloatField(null=True, blank=True)
 
@@ -41,7 +49,8 @@ class Entry(models.Model):
     MANY = 2
     NUM_CARS = ((FEW, '1 - 10'), (AVERAGE, '11 - 20'), (MANY, '> 20'))
     station = models.ForeignKey(Station, related_name='station_entries')
-    num_cars = models.PositiveIntegerField(choices=NUM_CARS)
+    num_cars = models.PositiveIntegerField(
+        choices=NUM_CARS, null=True, blank=True)
     fuel_price = models.DecimalField(
         max_digits=10, decimal_places=2, blank=True, null=True)
     kegs = models.BooleanField(default=False)

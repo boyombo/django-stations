@@ -37,6 +37,7 @@ def station_list(request):
 def add_entry(request, station_id):
     station = Station.objects.get(pk=station_id)
     if request.method == 'POST':
+        # import pdb;pdb.set_trace()
         form = EntryForm(request.POST)
         if form.is_valid():
             entry = form.save(commit=False)
