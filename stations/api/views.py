@@ -3,8 +3,39 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 
-from depot.models import Station
-from depot.forms import EntryForm, APISearchForm
+from depot.models import Station, Brand, Area, State
+from depot.forms import EntryForm, APISearchForm, APIStationForm
+
+
+def add_station(request):
+    form = APIStationForm(request.GET)
+    if form.is_valid():
+        brand_name = form.cleaned_data['brand'].upper()
+        address = form.cleaned_data['address']
+        state_tag = form.cleaned_data['state'].strip().lower()
+        try:
+            state = State.objects.get(tag__iexact=state_tag)
+        except State.DoesNotExist:
+            return HttpResponse('wrong state')
+
+        try:
+            brand = Brand.objects.get(name=brand_name)
+        except Brand.DoesNotExist:
+            brand = Brand.objects.create(name=brand_name)
+
+        # Does the station already exist?
+        try:
+            station = Station.objects.get(
+                brand=brand, address=address, state=state)
+            return HttpResponse('station already exists')
+        except Station.DoesNotExist:
+            station = Station.objects.create(
+                brand=brand, address=address, state=state)
+            for name in form.cleaned_data['area']:
+                area, _ = Area.objects.get_or_create(name=name)
+                station.area.add(area)
+            return HttpResponse('success')
+    return HttpResponse('error')
 
 
 def get_stations(request):

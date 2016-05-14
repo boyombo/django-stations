@@ -14,7 +14,20 @@ class StationForm(forms.Form):
 
     def clean_area(self):
         if 'area' in self.cleaned_data:
-            return [a.strip() for a in self.cleaned_data['area'].split(',')]
+            return [a.strip().lower()
+                    for a in self.cleaned_data['area'].split(',')]
+
+
+class APIStationForm(forms.Form):
+    brand = forms.CharField(max_length=200)
+    address = forms.CharField(max_length=250)
+    state = forms.CharField(max_length=250)
+    area = forms.CharField(max_length=250, required=False)
+
+    def clean_area(self):
+        if 'area' in self.cleaned_data:
+            return [a.strip().lower()
+                    for a in self.cleaned_data['area'].split(',')]
 
 
 class SearchForm(forms.Form):
