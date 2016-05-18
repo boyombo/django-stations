@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'depot.apps.DepotConfig',
+    'booking.apps.BookingConfig',
 ]
 
 MIDDLEWARE_CLASSES = [

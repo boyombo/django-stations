@@ -2,9 +2,12 @@
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
+import requests
+from random import randrange
 
-from depot.models import Station, Brand, Area, State
+from depot.models import Station, Area, State
 from depot.forms import EntryForm, APISearchForm, APIStationForm
+from booking.forms import BookingForm
 
 
 def add_station(request):
@@ -82,4 +85,22 @@ def make_entry(request, station_id):
             entry.station = station
             entry.save()
             return HttpResponse('Success')
+    return HttpResponse('Error')
+
+
+def booking(request):
+    form = BookingForm(request.GET)
+    if form.is_valid():
+        obj = form.save(commit=False)
+        code = randrange(10002321, 99221025)
+        obj.code = code
+        obj.save()
+        payload = {
+            'sender': 'VGCBOOK',
+            'to': '234{}'.format(obj.phone[-10:]),
+            'msg': "You have been booked into VGC with code: {}".format(code)
+        }
+        sms_url = 'http://shoutinsms.bayo.webfactional.com/api/sendmsg/'
+        requests.get(sms_url, params=payload)
+        return HttpResponse('A message has been sent to your visitor.')
     return HttpResponse('Error')
