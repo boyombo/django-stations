@@ -13,13 +13,13 @@ def add_station(request):
             address = form.cleaned_data['address']
             state = form.cleaned_data['state']
             #area = form.cleaned_data['area']
-            try:
-                brand = Brand.objects.get(name=brand_name)
-            except Brand.DoesNotExist:
-                brand = Brand.objects.create(name=brand_name)
+            #try:
+            #    brand = Brand.objects.get(name=brand_name)
+            #except Brand.DoesNotExist:
+            #    brand = Brand.objects.create(name=brand_name)
             #brand, _ = Brand.objects.get_or_create(name=brand_name)
             station = Station.objects.create(
-                brand=brand, address=address, state=state)
+                brand=brand_name, address=address, state=state)
             for name in form.cleaned_data['area']:
                 area, _ = Area.objects.get_or_create(name=name)
                 station.area.add(area)

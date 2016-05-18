@@ -10,7 +10,7 @@ class BrandAdmin(admin.ModelAdmin):
 
 @admin.register(Station)
 class StationAdmin(admin.ModelAdmin):
-    list_display = ['brand', 'address', 'longitude', 'latitude']
+    list_display = ['brand', 'address', 'state', 'longitude', 'latitude']
     filter_horizontal = ('area', )
 
 

@@ -18,19 +18,19 @@ def add_station(request):
         except State.DoesNotExist:
             return HttpResponse('wrong state')
 
-        try:
-            brand = Brand.objects.get(name=brand_name)
-        except Brand.DoesNotExist:
-            brand = Brand.objects.create(name=brand_name)
+        #try:
+        #    brand = Brand.objects.get(name=brand_name)
+        #except Brand.DoesNotExist:
+        #    brand = Brand.objects.create(name=brand_name)
 
         # Does the station already exist?
         try:
             station = Station.objects.get(
-                brand=brand, address=address, state=state)
+                brand=brand_name, address=address, state=state)
             return HttpResponse('station already exists')
         except Station.DoesNotExist:
             station = Station.objects.create(
-                brand=brand, address=address, state=state)
+                brand=brand_name, address=address, state=state)
             for name in form.cleaned_data['area']:
                 area, _ = Area.objects.get_or_create(name=name)
                 station.area.add(area)
@@ -51,7 +51,7 @@ def get_stations(request):
     for stn in stations:
         data = {
             'station_id': stn.id,
-            'name': stn.brand.name,
+            'name': stn.brand,
             'address': stn.address,
             'num_cars': 'N/A',
             'fuel_price': 'N/A',

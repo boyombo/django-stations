@@ -29,7 +29,8 @@ class Area(models.Model):
 
 
 class Station(models.Model):
-    brand = models.ForeignKey(Brand)
+    brand = models.CharField(max_length=200, blank=True)
+    place_id = models.CharField('Google Place ID', max_length=200, blank=True)
     address = models.CharField(max_length=250)
     area = models.ManyToManyField(Area, related_name='station_areas')
     state = models.ForeignKey(State, null=True, blank=True)
@@ -37,7 +38,7 @@ class Station(models.Model):
     latitude = models.FloatField(null=True, blank=True)
 
     def __unicode__(self):
-        return unicode(self.brand)
+        return self.brand
 
     @property
     def recent(self):
