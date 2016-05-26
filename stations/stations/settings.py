@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'depot.apps.DepotConfig',
     'booking.apps.BookingConfig',
+    'insure.apps.InsureConfig',
 ]
 
 MIDDLEWARE_CLASSES = [

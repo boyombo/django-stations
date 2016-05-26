@@ -1,5 +1,5 @@
 #from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
 import json
 import requests
@@ -8,6 +8,7 @@ from random import randrange
 from depot.models import Station, Area, State
 from depot.forms import EntryForm, APISearchForm, APIStationForm
 from booking.forms import BookingForm
+from insure.forms import EntryForm
 
 
 def add_station(request):
@@ -104,3 +105,13 @@ def booking(request):
         requests.get(sms_url, params=payload)
         return HttpResponse('A message has been sent to your visitor.')
     return HttpResponse('Error')
+
+
+@csrf_exempt
+def insure(request):
+    form = EntryForm(request.POST, request.FILES)
+    #import pdb;pdb.set_trace()
+    if form.is_valid():
+        form.save()
+        return HttpResponse("Saved building information.")
+    return HttpResponseBadRequest("Error")

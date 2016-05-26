@@ -8,4 +8,6 @@ urlpatterns = [
     url(r'new/$', views.add_station, name='api_add_station'),
     # Booking api
     url(r'booking/$', views.booking, name='api_booking'),
+    # Insure api
+    url(r'insure/$', views.insure, name='api_insure'),
 ]
