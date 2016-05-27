@@ -134,9 +134,9 @@ STATICFILES_DIRS = (
 
 # Media files
 
-MEDIA_URL = '/media/'
+MEDIA_URL = '/static/media/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(STATIC_ROOT, 'media')
 
 try:
     from local_settings import DEV_DEBUG
