@@ -8,7 +8,8 @@ from random import randrange
 from depot.models import Station, Area, State
 from depot.forms import EntryForm, APISearchForm, APIStationForm
 from booking.forms import BookingForm
-from insure.forms import EntryForm
+from insure.models import Device
+from insure import forms as insure_forms
 
 
 def add_station(request):
@@ -109,11 +110,14 @@ def booking(request):
 
 @csrf_exempt
 def insure(request):
-    form = EntryForm(request.POST, request.FILES)
-    #import pdb;pdb.set_trace()
+    form = insure_forms.EntryForm(request.POST, request.FILES)
+    # import pdb;pdb.set_trace()
     if form.is_valid():
-        form.save()
-        #obj = form.save(commit=False)
-        #obj.save()
+        obj = form.save(commit=False)
+        uuid = request.POST.get('uuid', '')
+        if uuid:
+            device, _ = Device.objects.get_or_create(uuid=uuid)
+            obj.device = device
+        obj.save()
         return HttpResponse("Saved building information.")
     return HttpResponseBadRequest("Error")

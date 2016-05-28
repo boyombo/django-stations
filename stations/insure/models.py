@@ -42,3 +42,6 @@ class Entry(models.Model):
         return mark_safe(
             '<img src="%s" height=100 width=100 />' % self.building.url)
     admin_image.allow_tags = True
+
+    def position(self):
+        return u'{}, {}'.format(self.latitude[:7], self.longitude[:7])
