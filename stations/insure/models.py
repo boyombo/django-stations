@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+from datetime import datetime
 
 from django.db import models
 from django.utils.safestring import mark_safe
@@ -28,6 +29,8 @@ class Entry(models.Model):
     building = models.ImageField('Building Image', upload_to='pictures')
     longitude = models.CharField(max_length=50, blank=True)
     latitude = models.CharField(max_length=50, blank=True)
+    uploaded_on = models.DateTimeField(default=datetime.now, blank=True)
+    device = models.ForeignKey(Device, blank=True, null=True)
 
     class Meta:
         verbose_name_plural = 'Entries'

@@ -113,5 +113,7 @@ def insure(request):
     #import pdb;pdb.set_trace()
     if form.is_valid():
         form.save()
+        #obj = form.save(commit=False)
+        #obj.save()
         return HttpResponse("Saved building information.")
     return HttpResponseBadRequest("Error")
