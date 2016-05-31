@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'depot.apps.DepotConfig',
     'booking.apps.BookingConfig',
     'insure.apps.InsureConfig',
+    'drugshare.apps.DrugshareConfig',
 ]
 
 MIDDLEWARE_CLASSES = [

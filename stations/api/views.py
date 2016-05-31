@@ -10,6 +10,8 @@ from depot.forms import EntryForm, APISearchForm, APIStationForm
 from booking.forms import BookingForm
 from insure.models import Device
 from insure import forms as insure_forms
+from drugshare import forms as drug_forms
+from drugshare import models as drug_models
 
 
 def add_station(request):
@@ -121,3 +123,32 @@ def insure(request):
         obj.save()
         return HttpResponse("Saved building information.")
     return HttpResponseBadRequest("Error")
+
+
+def register_pharm(request):
+    form = drug_forms.PharmacyForm(request.GET)
+    #import pdb;pdb.set_trace()
+    if form.is_valid():
+        pharm = form.save(commit=False)
+        _state = request.GET.get('state')
+        state = drug_models.State.objects.get(name__iexact=_state)
+        pharm.state = state
+        pharm.save()
+        return HttpResponse("Registered Pharmacy")
+    return HttpResponseBadRequest('Unable to register pharmacy')
+
+
+def add_drug(request):
+    form = drug_forms.DrugForm(request.GET)
+    if form.is_valid():
+        drug = form.save(commit=False)
+        uuid = request.GET.get('uuid')
+        try:
+            pharm = drug_models.Pharmacy.objects.get(uuid=uuid)
+        except drug_models.Pharmacy.DoesNotExist:
+            return HttpResponseBadRequest("Please register first")
+        else:
+            drug.pharmacy = pharm
+            drug.save()
+            return HttpResponse("Drug added")
+    return HttpResponseBadRequest('Unable to add the drug')
