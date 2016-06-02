@@ -3,6 +3,7 @@ from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
 import json
 import requests
+from collections import Counter
 from random import randrange
 
 from depot.models import Station, Area, State
@@ -140,6 +141,7 @@ def register_pharm(request):
 
 def add_drug(request):
     form = drug_forms.DrugForm(request.GET)
+    #import pdb;pdb.set_trace()
     if form.is_valid():
         drug = form.save(commit=False)
         uuid = request.GET.get('uuid')
@@ -152,3 +154,149 @@ def add_drug(request):
             drug.save()
             return HttpResponse("Drug added")
     return HttpResponseBadRequest('Unable to add the drug')
+
+
+def search_drug(request):
+    form = drug_forms.SearchForm(request.GET)
+    drugs = []
+    if form.is_valid():
+        item = form.cleaned_data['name'].title()
+        uuid = form.cleaned_data['uuid']
+        try:
+            pharmacy = drug_models.Pharmacy.objects.get(uuid=uuid)
+        except drug_models.Pharmacy.DoesNotExist:
+            return HttpResponseBadRequest('Please register')
+        else:
+            drug_models.Search.objects.create(pharmacy=pharmacy, name=item)
+
+        for drug in drug_models.Drug.objects.filter(
+                name__icontains=item).order_by('-expiry_date'):
+            item = {
+                'drug_id': drug.id,
+                'name': drug.name,
+                'area': drug.pharmacy.area,
+                'cost': '{}'.format(drug.cost),
+                'expiry': drug.expiry_date.strftime('%Y-%m-%d'),
+                'quantity': drug.quantity
+            }
+            drugs.append(item)
+    return HttpResponse(json.dumps(drugs))
+
+
+def stock_drug(request):
+    form = drug_forms.StockForm(request.GET)
+    drugs = []
+    if form.is_valid():
+        uuid = form.cleaned_data['uuid']
+        for drug in drug_models.Drug.objects.filter(
+                pharmacy__uuid__iexact=uuid):
+            item = {
+                'drug_id': drug.id,
+                'name': drug.name,
+                'cost': '{}'.format(drug.cost),
+                'expiry': drug.expiry_date.strftime('%Y-%m-%d'),
+                'quantity': drug.quantity
+            }
+            drugs.append(item)
+    return HttpResponse(json.dumps(drugs))
+
+
+def remove_drug(request, id):
+    form = drug_forms.StockForm(request.GET)
+    if form.is_valid():
+        uuid = form.cleaned_data['uuid']
+        try:
+            drug = drug_models.Drug.objects.get(pk=id, pharmacy__uuid=uuid)
+        except drug_models.Drug.DoesNotExist:
+            return HttpResponseBadRequest("Wrong drug")
+        drug.delete()
+        return HttpResponse("Deleted successfully")
+    return HttpResponseBadRequest("Error trying to delete drug")
+
+
+def recent_drugs(request, count):
+    drugs = drug_models.Search.objects.values_list('name', flat=True)
+    output = []
+    for item in Counter(drugs).most_common(int(count)):
+        output.append({
+            'name': item[0],
+            'count': item[1]})
+    print output
+    return HttpResponse(json.dumps(output))
+
+
+def wishlist_drug(request):
+    form = drug_forms.WishlistForm(request.GET)
+    drugs = []
+    if form.is_valid():
+        pharmacy = form.cleaned_data['uuid']
+        searches = drug_models.Search.objects.filter(
+            pharmacy=pharmacy).values_list('name', flat=True)
+        drugs = list(set(searches))
+        print drugs
+    return HttpResponse(json.dumps(drugs))
+
+
+def request_drug(request, drug_id):
+    try:
+        drug = drug_models.Drug.objects.get(pk=drug_id)
+    except drug_models.Drug.DoesNotExist:
+        return HttpResponseBadRequest('Wrong drug id')
+    form = drug_forms.UUIDForm(request.GET)
+    if form.is_valid():
+        pharmacy = form.cleaned_data['uuid']
+        quantity = form.cleaned_data['quantity']
+        drug_models.DrugRequest.objects.create(
+            drug=drug, pharmacy=pharmacy, quantity=quantity)
+        return HttpResponse('Successfully added request')
+    return HttpResponseBadRequest('Error creating request')
+
+
+def pending_requests(request):
+    form = drug_forms.WishlistForm(request.GET)
+    output = []
+    if form.is_valid():
+        pharmacy = form.cleaned_data['uuid']
+        requests = drug_models.DrugRequest.objects.filter(
+            drug__pharmacy=pharmacy, status=drug_models.DrugRequest.PENDING)
+        for item in requests:
+            output.append({
+                'id': item.id,
+                'name': item.drug.name,
+                'cost': '{}'.format(item.drug.cost),
+                'expiry': item.drug.expiry_date.strftime('%Y-%m-%d'),
+                'quantity': item.quantity,
+                'date': item.posted_on.strftime('%Y-%m-%d')
+            })
+    print output
+    return HttpResponse(json.dumps(output))
+
+
+def accept(request, request_id):
+    form = drug_forms.WishlistForm(request.GET)
+    if form.is_valid():
+        pharmacy = form.cleaned_data['uuid']
+        try:
+            drug_request = drug_models.DrugRequest.objects.get(
+                pk=request_id, drug__pharmacy=pharmacy)
+        except drug_models.DrugRequest.DoesNotExist:
+            return HttpResponseBadRequest('Error accepting request')
+        drug_request.status = drug_models.DrugRequest.ACCEPTED
+        drug_request.save()
+        return HttpResponse("Accepted successfully")
+    return HttpResponseBadRequest("Error trying to accept request")
+
+
+def reject(request, request_id):
+    form = drug_forms.WishlistForm(request.GET)
+    if form.is_valid():
+        pharmacy = form.cleaned_data['uuid']
+        try:
+            drug_request = drug_models.DrugRequest.objects.get(
+                pk=request_id, drug__pharmacy=pharmacy)
+        except drug_models.DrugRequest.DoesNotExist:
+            return HttpResponseBadRequest('Error rejecting request')
+        drug_request.status = drug_models.DrugRequest.CANCELLED
+        drug_request.save()
+        return HttpResponse("Rejected successfully")
+    return HttpResponseBadRequest("Error trying to reject request")
