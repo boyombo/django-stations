@@ -147,8 +147,6 @@ def register_pharm(request):
             pharmacy.state = state
             pharmacy.save()
         return HttpResponse("Registered Pharmacy")
-    else:
-        print form.errors
     return HttpResponseBadRequest('Unable to register pharmacy')
 
 
