@@ -130,11 +130,22 @@ def register_pharm(request):
     form = drug_forms.PharmacyForm(request.GET)
     #import pdb;pdb.set_trace()
     if form.is_valid():
-        pharm = form.save(commit=False)
         _state = request.GET.get('state')
         state = drug_models.State.objects.get(name__iexact=_state)
-        pharm.state = state
-        pharm.save()
+        uuid = form.cleaned_data['uuid']
+        try:
+            pharmacy = drug_models.Pharmacy.objects.get(uuid=uuid)
+        except drug_models.Pharmacy.DoesNotExist:
+            pharm = form.save(commit=False)
+            pharm.state = state
+            pharm.save()
+        else:
+            pharmacy.name = form.cleaned_data['name']
+            pharmacy.phone = form.cleaned_data['phone']
+            pharmacy.street = form.cleaned_data['street']
+            pharmacy.area = form.cleaned_data['area']
+            pharmacy.state = state
+            pharmacy.save()
         return HttpResponse("Registered Pharmacy")
     return HttpResponseBadRequest('Unable to register pharmacy')
 
