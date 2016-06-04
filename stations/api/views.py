@@ -144,6 +144,7 @@ def register_pharm(request):
             pharmacy.phone = form.cleaned_data['phone']
             pharmacy.street = form.cleaned_data['street']
             pharmacy.area = form.cleaned_data['area']
+            pharmacy.email = form.cleaned_data['email']
             pharmacy.state = state
             pharmacy.save()
         return HttpResponse("Registered Pharmacy")

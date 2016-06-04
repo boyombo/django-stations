@@ -18,6 +18,7 @@ class Pharmacy(models.Model):
     street = models.CharField(max_length=200, blank=True)
     area = models.CharField(max_length=200, blank=True)
     state = models.ForeignKey(State, blank=True)
+    email = models.CharField(max_length=200, blank=True, null=True)
     registration_date = models.DateField(default=date.today)
 
     class Meta:
