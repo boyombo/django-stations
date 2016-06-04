@@ -151,6 +151,18 @@ def register_pharm(request):
     return HttpResponseBadRequest('Unable to register pharmacy')
 
 
+def list_generic_drugs(request):
+    output = []
+    drugs = drug_models.Drug.objects.distinct('name')
+    for item in drugs:
+        output.append({
+            'id': item.id,
+            'name': item.name
+        })
+    print output
+    return HttpResponse(json.dumps(output))
+
+
 def add_drug(request):
     form = drug_forms.DrugForm(request.GET)
     #import pdb;pdb.set_trace()

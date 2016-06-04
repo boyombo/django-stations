@@ -21,7 +21,8 @@ class PharmacyAdmin(admin.ModelAdmin):
 
 @admin.register(Drug)
 class DrugAdmin(admin.ModelAdmin):
-    list_display = ['pharmacy', 'name', 'expiry_date', 'cost', 'quantity']
+    list_display = ['pharmacy', 'brand_name', 'name',
+                    'expiry_date', 'cost', 'quantity']
     list_filter = ['pharmacy']
     search_fields = ['name']
     date_hierarchy = 'expiry_date'

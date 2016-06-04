@@ -25,4 +25,5 @@ urlpatterns = [
     url(r'pending/$', views.pending_requests, name='api_pending_requests'),
     url(r'accept/(?P<request_id>\d+)/$', views.accept, name='api_accept'),
     url(r'reject/(?P<request_id>\d+)/$', views.reject, name='api_reject'),
+    url(r'drug_list/$', views.list_generic_drugs, name='api_drugs_list'),
 ]
