@@ -141,6 +141,7 @@ def register_pharm(request):
             pharm.save()
         else:
             pharmacy.name = form.cleaned_data['name']
+            pharmacy.pharmacist = form.cleaned_data['pharmacist']
             pharmacy.phone = form.cleaned_data['phone']
             pharmacy.street = form.cleaned_data['street']
             pharmacy.area = form.cleaned_data['area']
