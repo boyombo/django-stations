@@ -143,8 +143,7 @@ def register_pharm(request):
             pharmacy.name = form.cleaned_data['name']
             pharmacy.pharmacist = form.cleaned_data['pharmacist']
             pharmacy.phone = form.cleaned_data['phone']
-            pharmacy.street = form.cleaned_data['street']
-            pharmacy.area = form.cleaned_data['area']
+            pharmacy.address = form.cleaned_data['address']
             pharmacy.email = form.cleaned_data['email']
             pharmacy.state = state
             pharmacy.save()
@@ -199,7 +198,7 @@ def search_drug(request):
             item = {
                 'drug_id': drug.id,
                 'name': drug.name,
-                'area': drug.pharmacy.area,
+                'state': drug.pharmacy.state.name,
                 'cost': '{}'.format(drug.cost),
                 'expiry': drug.expiry_date.strftime('%Y-%m-%d'),
                 'quantity': drug.quantity

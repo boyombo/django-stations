@@ -16,7 +16,7 @@ class StateAdmin(admin.ModelAdmin):
 
 @admin.register(Pharmacy)
 class PharmacyAdmin(admin.ModelAdmin):
-    list_display = ['name', 'uuid', 'phone', 'email', 'area', 'state']
+    list_display = ['name', 'uuid', 'phone', 'email', 'address', 'state']
 
 
 @admin.register(Drug)
