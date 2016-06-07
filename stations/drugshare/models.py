@@ -16,9 +16,9 @@ class Pharmacy(models.Model):
     uuid = models.CharField(max_length=200)
     pharmacist = models.CharField(max_length=200, blank=True)
     phone = models.CharField(max_length=50, blank=True)
-    address = models.CharField(max_length=200, blank=True)
+    #address = models.CharField(max_length=200, blank=True)
     #area = models.CharField(max_length=200, blank=True)
-    state = models.ForeignKey(State, blank=True)
+    #state = models.ForeignKey(State, blank=True)
     email = models.CharField(max_length=200, blank=True, null=True)
     registration_date = models.DateField(default=date.today)
 
@@ -27,6 +27,16 @@ class Pharmacy(models.Model):
 
     def __unicode__(self):
         return self.name
+
+
+class Outlet(models.Model):
+    pharmacy = models.ForeignKey(Pharmacy)
+    phone = models.CharField(max_length=200, blank=True)
+    address = models.CharField(max_length=200, blank=True)
+    state = models.ForeignKey(State, blank=True)
+
+    def __unicode__(self):
+        return unicode(self.pharmacy)
 
 
 class Drug(models.Model):
