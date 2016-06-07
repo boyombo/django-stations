@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'insure/$', views.insure, name='api_insure'),
     # Drugshare api
     url(r'register_pharm/$', views.register_pharm, name='api_register_pharm'),
+    url(r'get_pharm/$', views.get_pharm, name='api_get_pharm'),
     url(r'add_drug/$', views.add_drug, name='api_add_drug'),
     url(r'search_drug/$', views.search_drug, name='api_search_drug'),
     url(r'wish_drug/$', views.wishlist_drug, name='api_wishlist_drug'),

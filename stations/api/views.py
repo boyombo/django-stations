@@ -151,6 +151,23 @@ def register_pharm(request):
     return HttpResponseBadRequest('Unable to register pharmacy')
 
 
+def get_pharm(request):
+    form = drug_forms.WishlistForm(request.GET)
+    if form.is_valid():
+        pharmacy = form.cleaned_data['uuid']
+        out = {
+            'name': pharmacy.name,
+            'pharmacist': pharmacy.pharmacist,
+            'phone': pharmacy.phone,
+            'email': pharmacy.email,
+            'address': pharmacy.address,
+            'state': pharmacy.state.name
+            }
+        print out
+        return HttpResponse(json.dumps(out))
+    return HttpResponseBadRequest("Error")
+
+
 def list_generic_drugs(request):
     output = []
     drugs = drug_models.Drug.objects.distinct('name')
