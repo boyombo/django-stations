@@ -45,4 +45,4 @@ class DrugRequestAdmin(admin.ModelAdmin):
 
 @admin.register(Outlet)
 class OutletAdmin(admin.ModelAdmin):
-    list_display = ['pharmacy', 'phone', 'address', 'state']
+    list_display = ['pharmacy', 'phone', 'address', 'state', 'active']

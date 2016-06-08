@@ -13,6 +13,11 @@ urlpatterns = [
     # Drugshare api
     url(r'register_pharm/$', views.register_pharm, name='api_register_pharm'),
     url(r'get_pharm/$', views.get_pharm, name='api_get_pharm'),
+    url(r'update_pharm/(?P<id>\d+)/$',
+        views.update_pharm, name='api_update_pharm'),
+    url(r'add_outlet/(?P<id>\d+)/$', views.add_outlet, name='api_add_outlet'),
+    url(r'delete_outlet/(?P<id>\d+)/$',
+        views.delete_outlet, name='api_delete_outlet'),
     url(r'add_drug/$', views.add_drug, name='api_add_drug'),
     url(r'search_drug/$', views.search_drug, name='api_search_drug'),
     url(r'wish_drug/$', views.wishlist_drug, name='api_wishlist_drug'),

@@ -34,6 +34,7 @@ class Outlet(models.Model):
     phone = models.CharField(max_length=200, blank=True)
     address = models.CharField(max_length=200, blank=True)
     state = models.ForeignKey(State, blank=True)
+    active = models.BooleanField(default=True)
 
     def __unicode__(self):
         return unicode(self.pharmacy)

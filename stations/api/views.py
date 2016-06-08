@@ -1,6 +1,7 @@
 #from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import get_object_or_404
 import json
 import requests
 from collections import Counter
@@ -128,24 +129,24 @@ def insure(request):
 
 def register_pharm(request):
     form = drug_forms.PharmacyForm(request.GET)
-    #import pdb;pdb.set_trace()
     if form.is_valid():
-        _state = request.GET.get('state')
-        state = drug_models.State.objects.get(name__iexact=_state)
+        #_state = request.GET.get('state')
+        #state = drug_models.State.objects.get(name__iexact=_state)
         uuid = form.cleaned_data['uuid']
         try:
             pharmacy = drug_models.Pharmacy.objects.get(uuid=uuid)
         except drug_models.Pharmacy.DoesNotExist:
-            pharm = form.save(commit=False)
-            pharm.state = state
-            pharm.save()
+            form.save()
+            #pharm = form.save(commit=False)
+            #pharm.state = state
+            #pharm.save()
         else:
             pharmacy.name = form.cleaned_data['name']
             pharmacy.pharmacist = form.cleaned_data['pharmacist']
             pharmacy.phone = form.cleaned_data['phone']
-            pharmacy.address = form.cleaned_data['address']
+            #pharmacy.address = form.cleaned_data['address']
             pharmacy.email = form.cleaned_data['email']
-            pharmacy.state = state
+            #pharmacy.state = state
             pharmacy.save()
         return HttpResponse("Registered Pharmacy")
     return HttpResponseBadRequest('Unable to register pharmacy')
@@ -160,12 +161,61 @@ def get_pharm(request):
             'pharmacist': pharmacy.pharmacist,
             'phone': pharmacy.phone,
             'email': pharmacy.email,
-            'address': pharmacy.address,
-            'state': pharmacy.state.name
-            }
+            #'address': pharmacy.address,
+            #'state': pharmacy.state.name,
+            'id': pharmacy.id
+        }
+        outlets = []
+        for outlet in drug_models.Outlet.objects.filter(
+                pharmacy=pharmacy, active=True):
+            outlets.append({
+                'id': outlet.id,
+                'phone': outlet.phone,
+                'address': outlet.address,
+                'state': outlet.state.name
+            })
+        out['outlets'] = outlets
         print out
         return HttpResponse(json.dumps(out))
     return HttpResponseBadRequest("Error")
+
+
+def delete_outlet(request, id):
+    outlet = get_object_or_404(drug_models.Outlet, pk=id)
+    outlet.active = False
+    outlet.save()
+    return HttpResponse('Successfully deleted outlet')
+
+
+
+def update_pharm(request, id):
+    pharmacy = get_object_or_404(drug_models.Pharmacy, id=id)
+    form = drug_forms.PharmacyForm(request.GET, instance=pharmacy)
+    #import pdb;pdb.set_trace()
+    if form.is_valid():
+        form.save()
+        #pharmacy.name = form.cleaned_data['name']
+        #pharmacy.phamacist = form.cleaned_data['pharmacist']
+        #pharmacy.phone = form.cleaned_data['phone']
+        #pharmacy.email = form.cleaned_data['email']
+        #pharmacy.save()
+        return HttpResponse("Saved Pharmacy")
+    return HttpResponseBadRequest('Unable to save Pharmacy')
+
+
+def add_outlet(request, id):
+    pharmacy = get_object_or_404(drug_models.Pharmacy, id=id)
+    #import pdb;pdb.set_trace()
+    form = drug_forms.OutletForm(request.GET)
+    if form.is_valid():
+        _state = request.GET.get('state')
+        state = drug_models.State.objects.get(name__iexact=_state)
+        outlet = form.save(commit=False)
+        outlet.pharmacy = pharmacy
+        outlet.state = state
+        outlet.save()
+        return HttpResponse("Saved Outlet")
+    return HttpResponseBadRequest('Unable to save Outlet')
 
 
 def list_generic_drugs(request):

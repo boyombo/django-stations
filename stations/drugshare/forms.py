@@ -1,13 +1,20 @@
 from django import forms
 
-from drugshare.models import Pharmacy, Drug
+from drugshare.models import Pharmacy, Drug, Outlet
 
 
 class PharmacyForm(forms.ModelForm):
 
     class Meta:
         model = Pharmacy
-        exclude = ['registration_date', 'state']
+        exclude = ['registration_date']
+
+
+class OutletForm(forms.ModelForm):
+
+    class Meta:
+        model = Outlet
+        exclude = ['pharmacy', 'state']
 
 
 class DrugForm(forms.ModelForm):
@@ -26,7 +33,7 @@ class UUIDForm(forms.Form):
     uuid = forms.CharField(max_length=200)
     quantity = forms.IntegerField()
 
-    def clean_uuid(self):
+def clean_uuid(self):
         if 'uuid' in self.cleaned_data:
             uuid = self.cleaned_data['uuid']
             try:
