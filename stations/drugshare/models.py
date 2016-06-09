@@ -91,6 +91,10 @@ class DrugRequest(models.Model):
     def unit_cost(self):
         return self.drug.cost
 
+    @property
+    def seller(self):
+        return self.drug.pharmacy
+
     def save(self, *args, **kwargs):
         super(DrugRequest, self).save_base(*args, **kwargs)
         RequestLog.objects.create(request=self, new_status=self.status)

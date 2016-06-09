@@ -39,7 +39,7 @@ class RequestLogAdmin(admin.ModelAdmin):
 
 @admin.register(DrugRequest)
 class DrugRequestAdmin(admin.ModelAdmin):
-    list_display = ['drug', 'pharmacy', 'quantity', 'posted_on',
+    list_display = ['drug', 'seller', 'pharmacy', 'quantity', 'posted_on',
                     'status', 'unit_cost', 'total_cost']
     date_hierarchy = 'posted_on'
 
