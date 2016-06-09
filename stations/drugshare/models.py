@@ -85,7 +85,11 @@ class DrugRequest(models.Model):
 
     @property
     def total_cost(self):
-        return self.quantity * self.drug.pack_size * self.drug.cost
+        return self.quantity * self.drug.cost
+
+    @property
+    def unit_cost(self):
+        return self.drug.cost
 
     def save(self, *args, **kwargs):
         super(DrugRequest, self).save_base(*args, **kwargs)
