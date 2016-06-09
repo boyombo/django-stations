@@ -235,16 +235,8 @@ def add_drug(request):
     form = drug_forms.DrugForm(request.GET)
     #import pdb;pdb.set_trace()
     if form.is_valid():
-        drug = form.save(commit=False)
-        uuid = request.GET.get('uuid')
-        try:
-            pharm = drug_models.Pharmacy.objects.get(uuid=uuid)
-        except drug_models.Pharmacy.DoesNotExist:
-            return HttpResponseBadRequest("Please register first")
-        else:
-            drug.pharmacy = pharm
-            drug.save()
-            return HttpResponse("Drug added")
+        form.save()
+        return HttpResponse("Drug added")
     return HttpResponseBadRequest('Unable to add the drug')
 
 

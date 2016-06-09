@@ -37,11 +37,12 @@ class Outlet(models.Model):
     active = models.BooleanField(default=True)
 
     def __unicode__(self):
-        return unicode(self.pharmacy)
+        return self.address
 
 
 class Drug(models.Model):
-    pharmacy = models.ForeignKey(Pharmacy)
+    #pharmacy = models.ForeignKey(Pharmacy)
+    outlet = models.ForeignKey(Outlet, null=True)
     name = models.CharField('Generic Name', max_length=200)
     brand_name = models.CharField(max_length=200, blank=True, null=True)
     pack_size = models.IntegerField(default=1)
