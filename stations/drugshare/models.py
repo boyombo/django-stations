@@ -44,7 +44,7 @@ class Drug(models.Model):
     pharmacy = models.ForeignKey(Pharmacy)
     name = models.CharField('Generic Name', max_length=200)
     brand_name = models.CharField(max_length=200, blank=True, null=True)
-    pack_size = models.IntegerField(blank=True, null=True)
+    pack_size = models.IntegerField(default=1)
     expiry_date = models.DateField()
     cost = models.DecimalField(max_digits=10, decimal_places=2)
     quantity = models.IntegerField()
@@ -82,6 +82,10 @@ class DrugRequest(models.Model):
 
     def __unicode__(self):
         return unicode(self.drug)
+
+    @property
+    def total_cost(self):
+        return self.quantity * self.drug.pack_size * self.drug.cost
 
     def save(self, *args, **kwargs):
         super(DrugRequest, self).save_base(*args, **kwargs)
