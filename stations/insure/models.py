@@ -15,6 +15,8 @@ class Device(models.Model):
 
 class Entry(models.Model):
     address = models.CharField(max_length=200, blank=True)
+    project_name = models.CharField(max_length=200, blank=True)
+    approval_code = models.CharField(max_length=100, blank=True)
     developer = models.CharField(max_length=200, blank=True)
     building_type = models.CharField(max_length=200, blank=True)
     consultants = models.CharField(max_length=200, blank=True)
