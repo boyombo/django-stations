@@ -269,35 +269,39 @@ def search_drug(request, id):
     return HttpResponse(json.dumps(drugs))
 
 
-def stock_drug(request):
-    form = drug_forms.StockForm(request.GET)
+def stock_drug(request, id):
+    pharmacy = get_object_or_404(drug_models.Pharmacy, pk=id)
     drugs = []
-    if form.is_valid():
-        uuid = form.cleaned_data['uuid']
-        for drug in drug_models.Drug.objects.filter(
-                pharmacy__uuid__iexact=uuid):
-            item = {
-                'drug_id': drug.id,
-                'name': drug.name,
-                'cost': '{}'.format(drug.cost),
-                'expiry': drug.expiry_date.strftime('%Y-%m-%d'),
-                'quantity': drug.quantity
-            }
-            drugs.append(item)
+    for drug in drug_models.Drug.objects.filter(
+            outlet__pharmacy=pharmacy):
+        item = {
+            'id': drug.id,
+            'name': drug.name,
+            'cost': '{}'.format(drug.cost),
+            'packsize': drug.pack_size,
+            'expiry': drug.expiry_date.strftime('%Y-%m-%d'),
+            'quantity': drug.quantity,
+            'address': drug.outlet.address
+        }
+
+        drugs.append(item)
     return HttpResponse(json.dumps(drugs))
 
 
 def remove_drug(request, id):
-    form = drug_forms.StockForm(request.GET)
+    drug = get_object_or_404(drug_models.Drug, pk=id)
+    drug.delete()
+    return HttpResponse("Deleted successfully")
+
+
+def edit_drug(request, id):
+    drug = get_object_or_404(drug_models.Drug, pk=id)
+    form = drug_forms.QtyForm(request.GET)
     if form.is_valid():
-        uuid = form.cleaned_data['uuid']
-        try:
-            drug = drug_models.Drug.objects.get(pk=id, pharmacy__uuid=uuid)
-        except drug_models.Drug.DoesNotExist:
-            return HttpResponseBadRequest("Wrong drug")
-        drug.delete()
-        return HttpResponse("Deleted successfully")
-    return HttpResponseBadRequest("Error trying to delete drug")
+        drug.quantity = form.cleaned_data['quantity']
+        drug.save()
+        return HttpResponse("Updated successfully")
+    return HttpResponseBadRequest("Error trying to update drug")
 
 
 def recent_drugs(request, count):
@@ -311,15 +315,22 @@ def recent_drugs(request, count):
     return HttpResponse(json.dumps(output))
 
 
-def wishlist_drug(request):
-    form = drug_forms.WishlistForm(request.GET)
+def wishlist_drug(request, pharm_id):
+    pharmacy = get_object_or_404(drug_models.Pharmacy, pk=pharm_id)
+    print "pharmacy %s" % pharmacy
     drugs = []
-    if form.is_valid():
-        pharmacy = form.cleaned_data['uuid']
-        searches = drug_models.Search.objects.filter(
-            pharmacy=pharmacy).values_list('name', flat=True)
-        drugs = list(set(searches))
-        print drugs
+    for item in drug_models.DrugRequest.objects.filter(
+            outlet__pharmacy=pharmacy,
+            status=drug_models.DrugRequest.PENDING):
+        drugs.append({
+            'name': item.drug.name,
+            'brand': item.drug.brand_name,
+            'outlet': item.outlet.address,
+            'quantity': item.quantity,
+            'cost': "{}".format(item.drug.cost),
+            'packsize': item.drug.pack_size,
+            'expiry': item.drug.expiry_date.strftime('%Y-%m-%d')
+        })
     return HttpResponse(json.dumps(drugs))
 
 
@@ -335,51 +346,35 @@ def request_drug(request, drug_id):
     return HttpResponseBadRequest('Error creating request')
 
 
-def pending_requests(request):
-    form = drug_forms.WishlistForm(request.GET)
+def pending_requests(request, pharm_id):
+    pharmacy = get_object_or_404(drug_models.Pharmacy, pk=pharm_id)
+    print "pharmacy %s" % pharmacy
     output = []
-    if form.is_valid():
-        pharmacy = form.cleaned_data['uuid']
-        requests = drug_models.DrugRequest.objects.filter(
-            drug__pharmacy=pharmacy, status=drug_models.DrugRequest.PENDING)
-        for item in requests:
-            output.append({
-                'id': item.id,
-                'name': item.drug.name,
-                'cost': '{}'.format(item.drug.cost),
-                'expiry': item.drug.expiry_date.strftime('%Y-%m-%d'),
-                'quantity': item.quantity,
-                'date': item.posted_on.strftime('%Y-%m-%d')
-            })
+    for item in drug_models.DrugRequest.objects.filter(
+            drug__outlet__pharmacy=pharmacy,
+            status=drug_models.DrugRequest.PENDING):
+        output.append({
+            'id': item.id,
+            'name': item.drug.name,
+            'cost': '{}'.format(item.drug.cost),
+            'expiry': item.drug.expiry_date.strftime('%Y-%m-%d'),
+            'quantity': item.quantity,
+            'date': item.posted_on.strftime('%Y-%m-%d'),
+            'state': item.drug.outlet.state.name
+        })
     print output
     return HttpResponse(json.dumps(output))
 
 
 def accept(request, request_id):
-    form = drug_forms.WishlistForm(request.GET)
-    if form.is_valid():
-        pharmacy = form.cleaned_data['uuid']
-        try:
-            drug_request = drug_models.DrugRequest.objects.get(
-                pk=request_id, drug__pharmacy=pharmacy)
-        except drug_models.DrugRequest.DoesNotExist:
-            return HttpResponseBadRequest('Error accepting request')
-        drug_request.status = drug_models.DrugRequest.ACCEPTED
-        drug_request.save()
-        return HttpResponse("Accepted successfully")
-    return HttpResponseBadRequest("Error trying to accept request")
+    drug_request = get_object_or_404(drug_models.DrugRequest, pk=request_id)
+    drug_request.status = drug_models.DrugRequest.ACCEPTED
+    drug_request.save()
+    return HttpResponse("Accepted successfully")
 
 
 def reject(request, request_id):
-    form = drug_forms.WishlistForm(request.GET)
-    if form.is_valid():
-        pharmacy = form.cleaned_data['uuid']
-        try:
-            drug_request = drug_models.DrugRequest.objects.get(
-                pk=request_id, drug__pharmacy=pharmacy)
-        except drug_models.DrugRequest.DoesNotExist:
-            return HttpResponseBadRequest('Error rejecting request')
-        drug_request.status = drug_models.DrugRequest.CANCELLED
-        drug_request.save()
-        return HttpResponse("Rejected successfully")
-    return HttpResponseBadRequest("Error trying to reject request")
+    drug_request = get_object_or_404(drug_models.DrugRequest, pk=request_id)
+    drug_request.status = drug_models.DrugRequest.CANCELLED
+    drug_request.save()
+    return HttpResponse("Rejected successfully")

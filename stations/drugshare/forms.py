@@ -32,6 +32,10 @@ class DrugForm(forms.ModelForm):
         exclude = ['posted_on']
 
 
+class QtyForm(forms.Form):
+    quantity = forms.IntegerField()
+
+
 class DrugRequestForm(forms.Form):
     quantity = forms.IntegerField()
     outlet = forms.IntegerField()
