@@ -213,6 +213,7 @@ def add_outlet(request, id):
         outlet = form.save(commit=False)
         outlet.pharmacy = pharmacy
         outlet.state = state
+        outlet.active = True
         outlet.save()
         return HttpResponse("Saved Outlet")
     return HttpResponseBadRequest('Unable to save Outlet')
