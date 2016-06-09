@@ -2,6 +2,7 @@
 from django.http import HttpResponse, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
 import json
 import requests
 from collections import Counter
@@ -128,46 +129,50 @@ def insure(request):
 
 
 def register_pharm(request):
-    form = drug_forms.PharmacyForm(request.GET)
+    form = drug_forms.RegisterForm(request.GET)
+    #import pdb;pdb.set_trace()
     if form.is_valid():
-        #_state = request.GET.get('state')
-        #state = drug_models.State.objects.get(name__iexact=_state)
         uuid = form.cleaned_data['uuid']
         try:
-            pharmacy = drug_models.Pharmacy.objects.get(uuid=uuid)
-        except drug_models.Pharmacy.DoesNotExist:
-            form.save()
-            #pharm = form.save(commit=False)
-            #pharm.state = state
-            #pharm.save()
-        else:
-            pharmacy.name = form.cleaned_data['name']
-            pharmacy.pharmacist = form.cleaned_data['pharmacist']
-            pharmacy.phone = form.cleaned_data['phone']
-            #pharmacy.address = form.cleaned_data['address']
-            pharmacy.email = form.cleaned_data['email']
-            #pharmacy.state = state
-            pharmacy.save()
-        return HttpResponse("Registered Pharmacy")
-    return HttpResponseBadRequest('Unable to register pharmacy')
+            drug_models.Device.objects.get(uuid=uuid)
+        except drug_models.Device.DoesNotExist:
+            pharmacy = drug_models.Pharmacy.objects.create(
+                name=form.cleaned_data['pharmacy'],
+                pharmacist=form.cleaned_data['pharmacist'],
+                phone=form.cleaned_data['phone'],
+                email=form.cleaned_data['email'])
+            device = drug_models.Device.objects.create(
+                pharmacy=pharmacy, uuid=uuid)
+            out = {
+                'name': pharmacy.name,
+                'pharmacist': pharmacy.pharmacist,
+                'phone': pharmacy.phone,
+                'email': pharmacy.email,
+                'id': pharmacy.id,
+                'device_id': device.id,
+                'outlets': []
+            }
+            return HttpResponse(json.dumps(out))
+    return HttpResponseBadRequest('Unable to register')
 
 
-def get_pharm(request):
-    form = drug_forms.WishlistForm(request.GET)
+def get_profile(request):
+    form = drug_forms.DeviceForm(request.GET)
     if form.is_valid():
-        pharmacy = form.cleaned_data['uuid']
+        device = form.cleaned_data['uuid']
+        if not device.active:
+            return HttpResponseBadRequest('Inactive device')
         out = {
-            'name': pharmacy.name,
-            'pharmacist': pharmacy.pharmacist,
-            'phone': pharmacy.phone,
-            'email': pharmacy.email,
-            #'address': pharmacy.address,
-            #'state': pharmacy.state.name,
-            'id': pharmacy.id
+            'name': device.pharmacy.name,
+            'pharmacist': device.pharmacy.pharmacist,
+            'phone': device.pharmacy.phone,
+            'email': device.pharmacy.email,
+            'id': device.pharmacy.id,
+            'device_id': device.id
         }
         outlets = []
         for outlet in drug_models.Outlet.objects.filter(
-                pharmacy=pharmacy, active=True):
+                pharmacy=device.pharmacy, active=True):
             outlets.append({
                 'id': outlet.id,
                 'phone': outlet.phone,
@@ -185,7 +190,6 @@ def delete_outlet(request, id):
     outlet.active = False
     outlet.save()
     return HttpResponse('Successfully deleted outlet')
-
 
 
 def update_pharm(request, id):
@@ -240,28 +244,26 @@ def add_drug(request):
     return HttpResponseBadRequest('Unable to add the drug')
 
 
-def search_drug(request):
+def search_drug(request, id):
+    device = get_object_or_404(drug_models.Device, pk=id)
     form = drug_forms.SearchForm(request.GET)
     drugs = []
     if form.is_valid():
         item = form.cleaned_data['name'].title()
-        uuid = form.cleaned_data['uuid']
-        try:
-            pharmacy = drug_models.Pharmacy.objects.get(uuid=uuid)
-        except drug_models.Pharmacy.DoesNotExist:
-            return HttpResponseBadRequest('Please register')
-        else:
-            drug_models.Search.objects.create(pharmacy=pharmacy, name=item)
+        drug_models.Search.objects.create(pharmacy=device.pharmacy, name=item)
 
         for drug in drug_models.Drug.objects.filter(
-                name__icontains=item).order_by('-expiry_date'):
+                Q(name__icontains=item) | Q(brand_name__icontains=item)
+                ).order_by('-expiry_date'):
             item = {
-                'drug_id': drug.id,
+                'id': drug.id,
                 'name': drug.name,
-                'state': drug.pharmacy.state.name,
+                'brand': drug.brand_name,
+                'state': drug.outlet.state.name,
                 'cost': '{}'.format(drug.cost),
                 'expiry': drug.expiry_date.strftime('%Y-%m-%d'),
-                'quantity': drug.quantity
+                'quantity': drug.quantity,
+                'packsize': drug.pack_size
             }
             drugs.append(item)
     return HttpResponse(json.dumps(drugs))
@@ -322,16 +324,13 @@ def wishlist_drug(request):
 
 
 def request_drug(request, drug_id):
-    try:
-        drug = drug_models.Drug.objects.get(pk=drug_id)
-    except drug_models.Drug.DoesNotExist:
-        return HttpResponseBadRequest('Wrong drug id')
-    form = drug_forms.UUIDForm(request.GET)
+    drug = get_object_or_404(drug_models.Drug, pk=drug_id)
+    form = drug_forms.DrugRequestForm(request.GET)
     if form.is_valid():
-        pharmacy = form.cleaned_data['uuid']
+        outlet = form.cleaned_data['outlet']
         quantity = form.cleaned_data['quantity']
         drug_models.DrugRequest.objects.create(
-            drug=drug, pharmacy=pharmacy, quantity=quantity)
+            drug=drug, outlet=outlet, quantity=quantity)
         return HttpResponse('Successfully added request')
     return HttpResponseBadRequest('Error creating request')
 

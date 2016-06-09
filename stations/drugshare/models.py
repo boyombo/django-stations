@@ -13,7 +13,7 @@ class State(models.Model):
 
 class Pharmacy(models.Model):
     name = models.CharField(max_length=200)
-    uuid = models.CharField(max_length=200)
+    #uuid = models.CharField(max_length=200)
     pharmacist = models.CharField(max_length=200, blank=True)
     phone = models.CharField(max_length=50, blank=True)
     #address = models.CharField(max_length=200, blank=True)
@@ -27,6 +27,15 @@ class Pharmacy(models.Model):
 
     def __unicode__(self):
         return self.name
+
+
+class Device(models.Model):
+    uuid = models.CharField(max_length=200, unique=True)
+    pharmacy = models.ForeignKey(Pharmacy)
+    active = models.BooleanField(default=True)
+
+    def __unicode__(self):
+        return self.uuid
 
 
 class Outlet(models.Model):
@@ -75,7 +84,8 @@ class DrugRequest(models.Model):
     REQUEST_STATUSES = enumerate(('Pending', 'Cancelled', 'Accepted', 'Done'))
 
     drug = models.ForeignKey(Drug)
-    pharmacy = models.ForeignKey(Pharmacy)
+    #pharmacy = models.ForeignKey(Pharmacy)
+    outlet = models.ForeignKey(Outlet, null=True)
     quantity = models.IntegerField()
     posted_on = models.DateTimeField(default=datetime.now)
     status = models.PositiveIntegerField(
@@ -94,7 +104,11 @@ class DrugRequest(models.Model):
 
     @property
     def seller(self):
-        return self.drug.pharmacy
+        return self.drug.outlet.pharmacy
+
+    @property
+    def buyer(self):
+        return self.outlet.pharmacy
 
     def save(self, *args, **kwargs):
         super(DrugRequest, self).save_base(*args, **kwargs)

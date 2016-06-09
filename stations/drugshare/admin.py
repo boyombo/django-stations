@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from drugshare.models import State, Pharmacy, Drug,\
-    Search, DrugRequest, RequestLog, Outlet
+    Search, DrugRequest, RequestLog, Outlet, Device
 
 
 @admin.register(Search)
@@ -14,9 +14,14 @@ class StateAdmin(admin.ModelAdmin):
     list_display = ['name']
 
 
+@admin.register(Device)
+class DeviceAdmin(admin.ModelAdmin):
+    list_display = ['uuid', 'pharmacy', 'active']
+
+
 @admin.register(Pharmacy)
 class PharmacyAdmin(admin.ModelAdmin):
-    list_display = ['name', 'uuid', 'email']
+    list_display = ['name', 'phone', 'email', 'registration_date']
 
 
 @admin.register(Drug)
@@ -39,8 +44,8 @@ class RequestLogAdmin(admin.ModelAdmin):
 
 @admin.register(DrugRequest)
 class DrugRequestAdmin(admin.ModelAdmin):
-    list_display = ['drug', 'seller', 'pharmacy', 'quantity', 'posted_on',
-                    'status', 'unit_cost', 'total_cost']
+    list_display = ['drug', 'seller', 'buyer', 'outlet', 'quantity',
+                    'posted_on', 'status', 'unit_cost', 'total_cost']
     date_hierarchy = 'posted_on'
 
 
