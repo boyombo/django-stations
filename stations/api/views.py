@@ -7,6 +7,7 @@ import json
 import requests
 from collections import Counter
 from random import randrange
+from datetime import date
 
 from depot.models import Station, Area, State
 from depot.forms import EntryForm, APISearchForm, APIStationForm
@@ -128,6 +129,53 @@ def insure(request):
     return HttpResponseBadRequest("Error")
 
 
+def add_device(request):
+    form = drug_forms.TokenForm(request.GET)
+    if form.is_valid():
+        code = form.cleaned_data['code']
+        uuid = form.cleaned_data['uuid']
+        try:
+            token = drug_models.Token.objects.get(
+                code=code, when=date.today())
+        except drug_models.Token.DoesNotExist:
+            return HttpResponseBadRequest('Token not valid')
+        else:
+            pharmacy = token.pharmacy
+            device = drug_models.Device.objects.create(
+                pharmacy=pharmacy, uuid=uuid)
+            out = {
+
+                'name': pharmacy.name,
+                'pharmacist': pharmacy.pharmacist,
+                'phone': pharmacy.phone,
+                'email': pharmacy.email,
+                'id': pharmacy.id,
+                'device_id': device.id,
+            }
+            outlets = []
+            for outlet in drug_models.Outlet.objects.filter(
+                    pharmacy=pharmacy, active=True):
+                outlets.append({
+                    'id': outlet.id,
+                    'phone': outlet.phone,
+                    'address': outlet.address,
+                    'state': outlet.state.name
+                })
+            out['outlets'] = outlets
+            return HttpResponse(json.dumps(out))
+    return HttpResponseBadRequest("Error in adding device")
+
+
+def make_token(request, device_id):
+    device = get_object_or_404(drug_models.Device, pk=device_id)
+    if not device.active:
+        return HttpResponseBadRequest('Inactive device')
+    pharm = device.pharmacy
+    token = randrange(100000, 999999)
+    drug_models.Token.objects.create(pharmacy=pharm, code=token)
+    return HttpResponse('{}'.format(token))
+
+
 def register_pharm(request):
     form = drug_forms.RegisterForm(request.GET)
     #import pdb;pdb.set_trace()
@@ -192,8 +240,12 @@ def delete_outlet(request, id):
     return HttpResponse('Successfully deleted outlet')
 
 
-def update_pharm(request, id):
-    pharmacy = get_object_or_404(drug_models.Pharmacy, id=id)
+def update_pharm(request, device_id):
+    device = get_object_or_404(drug_models.Device, pk=id)
+    if not device.active:
+        return HttpResponseBadRequest('Inactive device')
+    pharmacy = device.pharmacy
+    #pharmacy = get_object_or_404(drug_models.Pharmacy, id=id)
     form = drug_forms.PharmacyForm(request.GET, instance=pharmacy)
     #import pdb;pdb.set_trace()
     if form.is_valid():
@@ -207,15 +259,15 @@ def update_pharm(request, id):
     return HttpResponseBadRequest('Unable to save Pharmacy')
 
 
-def add_outlet(request, id):
-    pharmacy = get_object_or_404(drug_models.Pharmacy, id=id)
+def add_outlet(request, device_id):
+    device = get_object_or_404(drug_models.Device, id=device_id)
     #import pdb;pdb.set_trace()
     form = drug_forms.OutletForm(request.GET)
     if form.is_valid():
         _state = request.GET.get('state')
         state = drug_models.State.objects.get(name__iexact=_state)
         outlet = form.save(commit=False)
-        outlet.pharmacy = pharmacy
+        outlet.pharmacy = device.pharmacy
         outlet.state = state
         outlet.active = True
         outlet.save()
@@ -244,8 +296,10 @@ def add_drug(request):
     return HttpResponseBadRequest('Unable to add the drug')
 
 
-def search_drug(request, id):
-    device = get_object_or_404(drug_models.Device, pk=id)
+def search_drug(request, device_id):
+    device = get_object_or_404(drug_models.Device, pk=device_id)
+    if not device.active:
+        return HttpResponseBadRequest('Inactive device')
     form = drug_forms.SearchForm(request.GET)
     drugs = []
     if form.is_valid():
@@ -269,8 +323,12 @@ def search_drug(request, id):
     return HttpResponse(json.dumps(drugs))
 
 
-def stock_drug(request, id):
-    pharmacy = get_object_or_404(drug_models.Pharmacy, pk=id)
+def stock_drug(request, device_id):
+    device = get_object_or_404(drug_models.Device, pk=device_id)
+    if not device.active:
+        return HttpResponseBadRequest('Inactive device')
+    pharmacy = device.pharmacy
+    #pharmacy = get_object_or_404(drug_models.Pharmacy, pk=id)
     drugs = []
     for drug in drug_models.Drug.objects.filter(
             outlet__pharmacy=pharmacy):
@@ -315,8 +373,12 @@ def recent_drugs(request, count):
     return HttpResponse(json.dumps(output))
 
 
-def wishlist_drug(request, pharm_id):
-    pharmacy = get_object_or_404(drug_models.Pharmacy, pk=pharm_id)
+def wishlist_drug(request, device_id):
+    device = get_object_or_404(drug_models.Device, pk=device_id)
+    if not device.active:
+        return HttpResponseBadRequest('Inactive device')
+    pharmacy = device.pharmacy
+    #pharmacy = get_object_or_404(drug_models.Pharmacy, pk=pharm_id)
     print "pharmacy %s" % pharmacy
     drugs = []
     for item in drug_models.DrugRequest.objects.filter(
@@ -346,8 +408,11 @@ def request_drug(request, drug_id):
     return HttpResponseBadRequest('Error creating request')
 
 
-def pending_requests(request, pharm_id):
-    pharmacy = get_object_or_404(drug_models.Pharmacy, pk=pharm_id)
+def pending_requests(request, device_id):
+    device = get_object_or_404(drug_models.Device, pk=device_id)
+    if not device.active:
+        return HttpResponseBadRequest('Inactive device')
+    pharmacy = device.pharmacy
     print "pharmacy %s" % pharmacy
     output = []
     for item in drug_models.DrugRequest.objects.filter(

@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from drugshare.models import State, Pharmacy, Drug,\
-    Search, DrugRequest, RequestLog, Outlet, Device
+    Search, DrugRequest, RequestLog, Outlet, Device, Token
 
 
 @admin.register(Search)
@@ -21,7 +21,12 @@ class DeviceAdmin(admin.ModelAdmin):
 
 @admin.register(Pharmacy)
 class PharmacyAdmin(admin.ModelAdmin):
-    list_display = ['name', 'phone', 'email', 'registration_date']
+    list_display = ['name', 'phone', 'email', 'verified', 'registration_date']
+    actions = ['mark_verified']
+
+    def mark_verified(self, request, queryset):
+        queryset.update(verified=True)
+    mark_verified.short_description = 'Verify the selected pharmacies'
 
 
 @admin.register(Drug)
@@ -52,3 +57,11 @@ class DrugRequestAdmin(admin.ModelAdmin):
 @admin.register(Outlet)
 class OutletAdmin(admin.ModelAdmin):
     list_display = ['pharmacy', 'phone', 'address', 'state', 'active']
+
+
+@admin.register(Token)
+class TokenAdmin(admin.ModelAdmin):
+    list_display = ['code', 'pharmacy', 'when', 'valid']
+
+
+admin.site.disable_action('delete_selected')

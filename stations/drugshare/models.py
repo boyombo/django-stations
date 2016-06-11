@@ -21,6 +21,7 @@ class Pharmacy(models.Model):
     #state = models.ForeignKey(State, blank=True)
     email = models.CharField(max_length=200, blank=True, null=True)
     registration_date = models.DateField(default=date.today)
+    verified = models.BooleanField(default=False)
 
     class Meta:
         verbose_name_plural = 'Pharmacies'
@@ -140,3 +141,18 @@ class RequestLog(models.Model):
     @property
     def status(self):
         return self.get_new_status_display()
+
+
+class Token(models.Model):
+    code = models.CharField(max_length=20)
+    pharmacy = models.ForeignKey(Pharmacy)
+    when = models.DateField(default=date.today)
+
+    class Meta:
+        unique_together = ('code', 'when')
+
+    def __unicode__(self):
+        return unicode(self.pharmacy)
+
+    def valid(self):
+        return date.today() == self.when

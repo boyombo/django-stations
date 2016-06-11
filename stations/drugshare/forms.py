@@ -82,4 +82,22 @@ class DeviceForm(forms.Form):
                 device = Device.objects.get(uuid=uuid)
             except Device.DoesNotExist:
                 raise forms.ValidationError("device does not exist")
+            else:
+                if not device.active:
+                    raise forms.ValidationError("device is not active")
             return device
+
+
+class TokenForm(forms.Form):
+    code = forms.IntegerField()
+    uuid = forms.CharField(max_length=250)
+
+    def clean_uuid(self):
+        if 'uuid' in self.cleaned_data:
+            uuid = self.cleaned_data['uuid']
+            try:
+                Device.objects.get(uuid=uuid)
+            except Device.DoesNotExist:
+                return uuid
+            else:
+                raise forms.ValidationError('Device already exists')
