@@ -271,7 +271,13 @@ def add_outlet(request, device_id):
         outlet.state = state
         outlet.active = True
         outlet.save()
-        return HttpResponse("Saved Outlet")
+        out = {
+            'address': outlet.address,
+            'state': outlet.state.name,
+            'phone': outlet.phone,
+            'id': outlet.id
+        }
+        return HttpResponse(json.dumps(out))
     return HttpResponseBadRequest('Unable to save Outlet')
 
 
