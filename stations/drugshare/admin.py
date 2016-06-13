@@ -1,7 +1,27 @@
+from datetime import date
+
 from django.contrib import admin
+from django.utils.translation import ugettext_lazy as _
 
 from drugshare.models import State, Pharmacy, Drug,\
     Search, DrugRequest, RequestLog, Outlet, Device, Token
+
+
+class ExpiredListFilter(admin.SimpleListFilter):
+    title = _('expired')
+    parameter_name = 'expired'
+
+    def lookups(self, request, model_admin):
+        return (
+            ('yes', _('expired')),
+            ('no', _('not expired'))
+        )
+
+    def queryset(self, request, queryset):
+        if self.value() == 'yes':
+            return queryset.filter(expiry_date__lte=date.today())
+        else:
+            return queryset.filter(expiry_date__gt=date.today())
 
 
 @admin.register(Search)
@@ -31,9 +51,9 @@ class PharmacyAdmin(admin.ModelAdmin):
 
 @admin.register(Drug)
 class DrugAdmin(admin.ModelAdmin):
-    list_display = ['outlet', 'brand_name', 'name',
-                    'expiry_date', 'cost', 'quantity']
-    list_filter = ['outlet__pharmacy']
+    list_display = ['outlet', 'pharmacy', 'brand_name', 'name',
+                    'expiry_date', 'email', 'phone', 'cost', 'quantity']
+    list_filter = [ExpiredListFilter, 'outlet__pharmacy']
     search_fields = ['name']
     date_hierarchy = 'expiry_date'
 

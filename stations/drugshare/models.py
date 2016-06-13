@@ -50,6 +50,12 @@ class Outlet(models.Model):
         return self.address
 
 
+class DrugManager(models.Manager):
+    def valid_drugs(self):
+        return super(DrugManager, self).get_queryset().filter(
+            expiry_date__gt=date.today())
+
+
 class Drug(models.Model):
     #pharmacy = models.ForeignKey(Pharmacy)
     outlet = models.ForeignKey(Outlet, null=True)
@@ -61,8 +67,22 @@ class Drug(models.Model):
     quantity = models.IntegerField()
     posted_on = models.DateTimeField(default=datetime.now)
 
+    objects = DrugManager()
+
     def __unicode__(self):
         return self.name
+
+    @property
+    def pharmacy(self):
+        return self.outlet.pharmacy
+
+    @property
+    def email(self):
+        return self.outlet.pharmacy.email
+
+    @property
+    def phone(self):
+        return self.outlet.pharmacy.phone
 
 
 class Search(models.Model):

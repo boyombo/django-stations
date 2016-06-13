@@ -312,7 +312,7 @@ def search_drug(request, device_id):
         item = form.cleaned_data['name'].title()
         drug_models.Search.objects.create(pharmacy=device.pharmacy, name=item)
 
-        for drug in drug_models.Drug.objects.filter(
+        for drug in drug_models.Drug.objects.valid_drugs().filter(
                 Q(name__icontains=item) | Q(brand_name__icontains=item)
                 ).order_by('-expiry_date'):
             item = {
@@ -336,7 +336,7 @@ def stock_drug(request, device_id):
     pharmacy = device.pharmacy
     #pharmacy = get_object_or_404(drug_models.Pharmacy, pk=id)
     drugs = []
-    for drug in drug_models.Drug.objects.filter(
+    for drug in drug_models.Drug.objects.valid_drugs().filter(
             outlet__pharmacy=pharmacy):
         item = {
             'id': drug.id,
@@ -386,10 +386,17 @@ def wishlist_drug(request, device_id):
     pharmacy = device.pharmacy
     #pharmacy = get_object_or_404(drug_models.Pharmacy, pk=pharm_id)
     print "pharmacy %s" % pharmacy
+    today = date.today()
     drugs = []
     for item in drug_models.DrugRequest.objects.filter(
             outlet__pharmacy=pharmacy,
-            status=drug_models.DrugRequest.PENDING):
+            drug__expiry_date__gt=today).filter(
+            Q(status=drug_models.DrugRequest.PENDING)
+            | Q(status=drug_models.DrugRequest.ACCEPTED)):
+        if item.status == drug_models.DrugRequest.PENDING:
+            status = "Pending"
+        else:
+            status = "Accepted"
         drugs.append({
             'name': item.drug.name,
             'brand': item.drug.brand_name,
@@ -397,7 +404,8 @@ def wishlist_drug(request, device_id):
             'quantity': item.quantity,
             'cost': "{}".format(item.drug.cost),
             'packsize': item.drug.pack_size,
-            'expiry': item.drug.expiry_date.strftime('%Y-%m-%d')
+            'expiry': item.drug.expiry_date.strftime('%Y-%m-%d'),
+            'status': status
         })
     return HttpResponse(json.dumps(drugs))
 
@@ -420,9 +428,11 @@ def pending_requests(request, device_id):
         return HttpResponseBadRequest('Inactive device')
     pharmacy = device.pharmacy
     print "pharmacy %s" % pharmacy
+    today = date.today()
     output = []
     for item in drug_models.DrugRequest.objects.filter(
             drug__outlet__pharmacy=pharmacy,
+            drug__expiry_date__gt=today,
             status=drug_models.DrugRequest.PENDING):
         output.append({
             'id': item.id,
