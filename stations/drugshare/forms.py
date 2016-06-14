@@ -101,3 +101,7 @@ class TokenForm(forms.Form):
                 return uuid
             else:
                 raise forms.ValidationError('Device already exists')
+
+
+class FeedbackForm(forms.Form):
+    message = forms.CharField(widget=forms.Textarea)

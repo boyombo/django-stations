@@ -4,7 +4,8 @@ from django.contrib import admin
 from django.utils.translation import ugettext_lazy as _
 
 from drugshare.models import State, Pharmacy, Drug,\
-    Search, DrugRequest, RequestLog, Outlet, Device, Token
+    Search, DrugRequest, RequestLog, Outlet, Device, Token,\
+    RequestFeedback
 
 
 class ExpiredListFilter(admin.SimpleListFilter):
@@ -84,4 +85,8 @@ class TokenAdmin(admin.ModelAdmin):
     list_display = ['code', 'pharmacy', 'when', 'valid']
 
 
+@admin.register(RequestFeedback)
+class RequestFeedbackAdmin(admin.ModelAdmin):
+    list_display = ['request', 'drug', 'owner', 'status', 'when', 'message']
+    date_hierarchy = 'when'
 admin.site.disable_action('delete_selected')

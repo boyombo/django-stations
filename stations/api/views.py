@@ -398,6 +398,7 @@ def wishlist_drug(request, device_id):
         else:
             status = "Accepted"
         drugs.append({
+            'id': item.id,
             'name': item.drug.name,
             'brand': item.drug.brand_name,
             'outlet': item.outlet.address,
@@ -405,7 +406,8 @@ def wishlist_drug(request, device_id):
             'cost': "{}".format(item.drug.cost),
             'packsize': item.drug.pack_size,
             'expiry': item.drug.expiry_date.strftime('%Y-%m-%d'),
-            'status': status
+            'status': status,
+            'total_cost': "{}".format(item.total_cost)
         })
     return HttpResponse(json.dumps(drugs))
 
@@ -459,3 +461,15 @@ def reject(request, request_id):
     drug_request.status = drug_models.DrugRequest.CANCELLED
     drug_request.save()
     return HttpResponse("Rejected successfully")
+
+
+def feedback(request, id):
+    drug_request = get_object_or_404(drug_models.DrugRequest, pk=id)
+    form = drug_forms.FeedbackForm(request.GET)
+    if form.is_valid():
+        drug_models.RequestFeedback.objects.create(
+            request=drug_request,
+            request_status=drug_request.status,
+            message=form.cleaned_data['message'])
+        return HttpResponse("Feedback added successfully")
+    return HttpResponseBadRequest('Error adding feedback')

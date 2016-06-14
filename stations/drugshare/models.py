@@ -117,7 +117,7 @@ class DrugRequest(models.Model):
 
     @property
     def total_cost(self):
-        return self.quantity * self.drug.cost
+        return self.quantity * self.drug.cost * self.drug.pack_size
 
     @property
     def unit_cost(self):
@@ -176,3 +176,29 @@ class Token(models.Model):
 
     def valid(self):
         return date.today() == self.when
+
+
+class RequestFeedback(models.Model):
+    REQUEST_STATUSES = enumerate(('Pending', 'Cancelled', 'Accepted', 'Done'))
+    request = models.ForeignKey(DrugRequest)
+    request_status = models.PositiveIntegerField(choices=REQUEST_STATUSES)
+    message = models.TextField()
+    when = models.DateTimeField(default=datetime.now)
+
+    class Meta:
+        verbose_name_plural = 'Request Feedback'
+
+    def __unicode__(self):
+        return unicode(self.request)
+
+    @property
+    def status(self):
+        return self.get_request_status_display()
+
+    @property
+    def drug(self):
+        return self.request.drug
+
+    @property
+    def owner(self):
+        return self.request.drug.pharmacy
