@@ -12,6 +12,7 @@ from datetime import date
 from depot.models import Station, Area, State
 from depot.forms import EntryForm, APISearchForm, APIStationForm
 from booking.forms import BookingForm
+from booking import models as booking_models
 from insure.models import Device
 from insure import forms as insure_forms
 from drugshare import forms as drug_forms
@@ -96,22 +97,97 @@ def make_entry(request, station_id):
     return HttpResponse('Error')
 
 
-def booking(request):
+def booking(request, resident_id):
+    resident = get_object_or_404(booking_models.Resident, pk=resident_id)
+    estate = resident.estate
     form = BookingForm(request.GET)
+    #import pdb;pdb.set_trace()
     if form.is_valid():
         obj = form.save(commit=False)
         code = randrange(10002321, 99221025)
         obj.code = code
+        obj.resident = resident
         obj.save()
+        msg = "You have been booked by {resident.name} into\
+                {resident.estate.name} with code: {code}".format(
+            resident=resident, code=code)
         payload = {
-            'sender': 'VGCBOOK',
+            'sender': 'V LOGIN',
             'to': '234{}'.format(obj.phone[-10:]),
-            'msg': "You have been booked into VGC with code: {}".format(code)
+            'msg': msg
         }
         sms_url = 'http://shoutinsms.bayo.webfactional.com/api/sendmsg/'
         requests.get(sms_url, params=payload)
+        booking_models.SentMessage.objects.create(resident=resident)
+        estate.balance -= 1
+        estate.save()
         return HttpResponse('A message has been sent to your visitor.')
-    return HttpResponse('Error')
+    return HttpResponseBadRequest('An error occured. Please try again')
+
+
+def book_profile(request):
+    uuid = request.GET.get('uuid')
+    device = get_object_or_404(
+        booking_models.Device, uuid=uuid, resident__isnull=False)
+    out = {
+        'device_id': device.id,
+        'resident_id': device.resident.id,
+        'estate_id': device.resident.estate.id
+    }
+    print out
+    return HttpResponse(json.dumps(out))
+
+
+def book_phone(request):
+    phone = request.GET.get('phone')
+    uuid = request.GET.get('uuid')
+
+    try:
+        booking_models.Resident.objects.get(phone=phone)
+    except booking_models.Resident.DoesNotExist:
+        return HttpResponseBadRequest('Sorry you have not been registered')
+    else:
+        try:
+            booking_models.Token.objects.get(msisdn=phone)
+        except booking_models.Token.DoesNotExist:
+            code = randrange(100321, 992125)
+            booking_models.Token.objects.create(
+                code=code, msisdn=phone, uuid=uuid)
+            payload = {
+                'sender': 'V LOGIN',
+                'to': phone,
+                'msg': 'This is your verification code: {}'.format(code)
+            }
+            sms_url = 'http://shoutinsms.bayo.webfactional.com/api/sendmsg/'
+            requests.get(sms_url, params=payload)
+            return HttpResponse('The verification code has been sent to you.')
+        else:
+            return HttpResponseBadRequest(
+                'A verification code has already been sent')
+    return HttpResponseBadRequest(
+        'An unfortunate error occured, please contact the admin')
+
+
+def book_code(request):
+    code = request.GET.get('code')
+    uuid = request.GET.get('uuid')
+    try:
+        token = booking_models.Token.objects.get(code=code, uuid=uuid)
+    except booking_models.Token.DoesNotExist:
+        return HttpResponseBadRequest('The code you sent is invalid')
+    else:
+        resident = booking_models.Resident.objects.get(phone=token.msisdn)
+        resident.active = True
+        resident.save()
+        device = booking_models.Device.objects.create(
+            uuid=uuid, resident=resident)
+        out = {
+            'device_id': device.id,
+            'resident_id': device.resident.id,
+            'estate_id': device.resident.estate.id
+        }
+        return HttpResponse(json.dumps(out))
+    return HttpResponseBadRequest('Error, please contact the admin')
 
 
 @csrf_exempt

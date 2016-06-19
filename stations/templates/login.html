@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load static from staticfiles %}
+
+{% block pageheader %}
+    <h1 class="page-header">Login</h1>
+{% endblock pageheader %}
+
+{% block panelheader %}
+Login
+{% endblock panelheader %}
+
+{% block panelbody %}
+<div class="row">
+<div class="col-lg-4">
+{% if form.errors %}
+<p class="alert alert-danger">Your username and password didn't match. Please try again.</p>
+{% endif %}
+
+{% if next %}
+<p>Please login to see this page.</p>
+{% endif %}
+<form action="{% url 'login' %}" method="post" role="form">{% csrf_token %}
+    <fieldset>
+        <div class="form-group">
+            <label for={{ form.username.id_for_label }} class="control-label">User name</label>
+            {{ form.username }}
+        </div>
+        <div class="form-group">
+            <label for={{ form.password.id_for_label }} class="control-label">Password</label>
+            {{ form.password }}
+        </div>
+        <input type="submit" value="Login" class="btn btn-success btn-block" />
+    </fieldset>
+</form>
+</div>
+</div>
+{% endblock panelbody %}
+
+{% block extra-js %}
+<script type="text/javascript">
+    $('#id_username').addClass('form-control')
+    $('#id_password').addClass('form-control')
+</script>
+{% endblock extra-js %}

@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% load static from staticfiles %}
+
+{% block extra-css %}
+<link href="{% static 'css/dataTables.bootstrap.css' %}" rel="stylesheet">
+<link href="{% static 'css/dataTables.responsive.css' %}" rel="stylesheet">
+{% endblock extra-css %}
+
+{% block pageheader %}
+    <h1 class="page-header">Dashboard</h1>
+{% endblock pageheader %}
+
+{% block panelheader %}
+Residents: {{ residents.count }}, SMS Credit: {{ sms_credit }}
+{% endblock panelheader %}
+
+{% block panelbody %}
+<div class="row">
+    <div class="col-lg-6">
+        <form action="" method="post" role="form">{% csrf_token %}
+            {% if form.non_field_errors %}
+                {% for error in form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="form-group">
+                {% if form.name.errors %}
+                    <div class="alert alert-danger">
+                        {{ form.name.errors }}
+                    </div>
+                {% endif %}
+                <label for="{{ form.name.id_for_label }}" class="control-label">Name</label>
+                {{ form.name }}
+            </div>
+
+            <div class="form-group">
+                {% if form.phone.errors %}
+                    <div class="alert alert-danger">
+                        {{ form.phone.errors }}
+                    </div>
+                {% endif %}
+                <label for="{{ form.phone.id_for_label }}" class="control-label">Phone</label>
+                {{ form.phone }}
+            </div>
+                <input type="submit" value="Save" class="btn btn-primary btn-lg btn-block" />
+        </form>
+    </div>
+</div>
+<div class="dataTable_wrapper">
+    <div class="dataTables_wrapper form-inline dt-bootstrap no-footer">
+        <div class="row">
+            <div class="col-sm-6">
+            </div>
+            <div class="col-sm-6">
+                <div class="dataTables_filter">
+                    <form method="get" action="">
+                        <label>Search:
+                            <input type="text" class="form-control" placeholder='search' />
+                        </label>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+<div class="table-responsive">
+    <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+         <thead>
+             <tr>
+                 <th>Name</th>
+                 <th>Phone</th>
+                 <th>Remove</th>
+             </tr>
+         </thead>
+         <tbody>
+         {% for resident in residents %}
+         <tr>
+             <td>{{ resident.name }}</td>
+             <td>{{ resident.phone }}</td>
+             <td><a href="{% url 'remove_resident' id=resident.id %}"><i class="fa fa-cancel fa-fw"></i>remove</a></td>
+         </tr>
+         {% endfor %}
+         </tbody>
+     </table>
+ </div>
+ </div>
+{% endblock panelbody %}
+
+{% block extra-js %}
+<script type="text/javascript" src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
+<script type="text/javascript">
+$('#id_name').addClass('form-control');
+$('#id_phone').addClass('form-control');
+$('#id_phone').attr('placeholder', 'Please include country code e.g. 2348023456789');
+</script>
+{% endblock extra-js %}

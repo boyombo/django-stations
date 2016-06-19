@@ -17,6 +17,7 @@ from django.conf.urls.static import static
 from django.conf.urls import url, include
 from django.conf import settings
 from django.contrib import admin
+from django.contrib.auth.views import login, logout_then_login
 from depot import views
 
 urlpatterns = [
@@ -25,6 +26,10 @@ urlpatterns = [
     url(r'add/(?P<station_id>\d+)/$', views.add_entry, name='update'),
     url(r'station/$', views.add_station, name='add_station'),
     url(r'api/', include('api.urls'),),
+    url(r'booking/', include('booking.urls'),),
+    url(r'^accounts/login/$',
+        login, {'template_name': 'login.html'}, name='login'),
+    url(r'^accounts/logout/$', logout_then_login, name='logout'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 admin.site.site_header = 'Stations admin'

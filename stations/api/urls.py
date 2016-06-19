@@ -7,7 +7,10 @@ urlpatterns = [
     url(r'entry/(?P<station_id>\d+)/$', views.make_entry, name='api_entry'),
     url(r'new/$', views.add_station, name='api_add_station'),
     # Booking api
-    url(r'booking/$', views.booking, name='api_booking'),
+    url(r'booking/(?P<resident_id>\d+)/$', views.booking, name='api_booking'),
+    url(r'book_profile/$', views.book_profile, name='api_book_profile'),
+    url(r'book_phone/$', views.book_phone, name='api_book_phone'),
+    url(r'book_code/$', views.book_code, name='api_book_code'),
     # Insure api
     url(r'insure/$', views.insure, name='api_insure'),
     # Drugshare api
