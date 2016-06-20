@@ -75,9 +75,9 @@
                         {% if user.is_authenticated %}
                         <li><a href="{% url 'logout' %}"><i class="fa fa-sign-out fa-fw"></i> Logout</a>
                         {% else %}
-                        <li><a href="{% url 'login' %}"><i class="fa fa-sign-in fa-fw"></i> Login</a>
+                        <li><a href="{% url 'login' %}"><i class="fa fa-sign-in fa-fw"></i> Login</a></li>
+                        <li><a href="{% url 'register' %}"><i class="fa fa-edit fa-fw"></i> Register</a></li>
                         {% endif %}
-                        </li>
                     </ul>
                     <!-- /.dropdown-user -->
                 </li>
@@ -294,6 +294,7 @@
             </ul>
             <!-- /.navbar-top-links -->
             {% endcomment %}
+            {% block left-nav %}
 
             <div class="navbar-default sidebar" role="navigation">
                 <div class="sidebar-nav navbar-collapse">
@@ -313,12 +314,16 @@
                         <a href="{% url 'dashboard' %}"><i class="fa fa-home fa-fw"></i> Home</a>
                         </li>
                         <li>
-                        <a href="#"><i class="fa fa-plus fa-fw"></i> Reports</a>
+                        <a href="{% url 'resident_list' %}"><i class="fa fa-users fa-fw"></i> Residents</a>
+                        </li>
+                        <li>
+                        <a href="{% url 'reports' %}"><i class="fa fa-file fa-fw"></i> Reports</a>
                         </li>
                     </ul>
                 </div>
                 <!-- /.sidebar-collapse -->
             </div>
+            {% endblock left-nav %}
             <!-- /.navbar-static-side -->
         </nav>
 

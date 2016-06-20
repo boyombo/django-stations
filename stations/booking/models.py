@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 from datetime import datetime, date
+from django.utils import timezone
 
 from django.contrib.auth.models import User
 from django.db import models
@@ -11,11 +12,14 @@ class Booking(models.Model):
     phone = models.CharField(max_length=20)
     visitors = models.PositiveIntegerField(default=0)
     mode = models.CharField(max_length=50)
-    booked_on = models.DateTimeField(default=datetime.now)
+    booked_on = models.DateTimeField(default=timezone.now)
     code = models.CharField(max_length=10, blank=True)
 
     def __unicode__(self):
         return self.name
+
+    def valid(self):
+        return (timezone.now() - self.booked_on).days <= 1
 
 
 class Estate(models.Model):
