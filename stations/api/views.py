@@ -17,6 +17,7 @@ from insure.models import Device
 from insure import forms as insure_forms
 from drugshare import forms as drug_forms
 from drugshare import models as drug_models
+from api.sms import send_message
 
 
 def add_station(request):
@@ -111,13 +112,15 @@ def booking(request, resident_id):
         msg = "You have been booked by {resident.name} into\
                 {resident.estate.name} with code: {code}".format(
             resident=resident, code=code)
-        payload = {
-            'sender': 'V LOGIN',
-            'to': '234{}'.format(obj.phone[-10:]),
-            'msg': msg
-        }
-        sms_url = 'http://shoutinsms.bayo.webfactional.com/api/sendmsg/'
-        requests.get(sms_url, params=payload)
+        phone = '234{}'.format(obj.phone[-10:])
+        #payload = {
+        #    'sender': 'V LOGIN',
+        #    'to': '234{}'.format(obj.phone[-10:]),
+        #    'msg': msg
+        #}
+        send_message(phone, msg)
+        #sms_url = 'http://shoutinsms.bayo.webfactional.com/api/sendmsg/'
+        #requests.get(sms_url, params=payload)
         booking_models.SentMessage.objects.create(resident=resident)
         estate.balance -= 1
         estate.save()
@@ -153,13 +156,15 @@ def book_phone(request):
             code = randrange(100321, 992125)
             booking_models.Token.objects.create(
                 code=code, msisdn=phone, uuid=uuid)
-            payload = {
-                'sender': 'V LOGIN',
-                'to': phone,
-                'msg': 'This is your verification code: {}'.format(code)
-            }
-            sms_url = 'http://shoutinsms.bayo.webfactional.com/api/sendmsg/'
-            requests.get(sms_url, params=payload)
+            #payload = {
+            #    'sender': 'V LOGIN',
+            #    'to': phone,
+            #    'msg': 'This is your verification code: {}'.format(code)
+            #}
+            msg = 'This is your verification code: {}'.format(code)
+            send_message(phone, msg)
+            #sms_url = 'http://shoutinsms.bayo.webfactional.com/api/sendmsg/'
+            #requests.get(sms_url, params=payload)
             return HttpResponse('The verification code has been sent to you.')
         else:
             return HttpResponseBadRequest(
