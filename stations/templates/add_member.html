@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% load static from staticfiles %}
+
+{% block extra-css %}
+    <link href="{% static 'css/bootstrap-datepicker.min.css' %}" rel="stylesheet" type="text/css" />
+{% endblock extra-css %}
+
+{% block pageheader %}
+    <h1 class="page-header">Register</h1>
+{% endblock pageheader %}
+
+{% block panelheader %}
+Register
+{% endblock panelheader %}
+
+{% block panelbody %}
+<div class="row">
+    <div class="col-lg-4">
+        <form action="" method="post" role="form">{% csrf_token %}
+            {% if form.non_field_errors %}
+                {% for error in form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="form-group">
+                {% if form.first_name.errors %}
+                    <div class="alert alert-danger">
+                        {{ form.first_name.errors }}
+                    </div>
+                {% endif %}
+                <label for="{{ form.first_name.id_for_label }}" class="control-label">First name</label>
+                {{ form.first_name }}
+            </div>
+
+            <div class="form-group">
+                {% if form.last_name.errors %}
+                    <div class="alert alert-danger">
+                        {{ form.last_name.errors }}
+                    </div>
+                {% endif %}
+                <label for="{{ form.last_name.id_for_label }}" class="control-label">Last name</label>
+                {{ form.last_name }}
+            </div>
+
+            <div class="form-group">
+                {% if form.email.errors %}
+                    <div class="alert alert-danger">
+                        {{ form.email.errors }}
+                    </div>
+                {% endif %}
+                <label for="{{ form.email.id_for_label }}" class="control-label">Email</label>
+                {{ form.email }}
+            </div>
+
+            <div class="form-group">
+                {% if form.phone.errors %}
+                    <div class="alert alert-danger">
+                        {{ form.phone.errors }}
+                    </div>
+                {% endif %}
+                <label for="{{ form.phone.id_for_label }}" class="control-label">Phone</label>
+                {{ form.phone }}
+            </div>
+
+            <div class="form-group">
+                {% if form.gender.errors %}
+                    <div class="alert alert-danger">
+                        {{ form.gender.errors }}
+                    </div>
+                {% endif %}
+                <label for="{{ form.gender.id_for_label }}" class="control-label">gender</label>
+                {{ form.gender }}
+            </div>
+
+            <div class="form-group">
+                {% if form.availability.errors %}
+                    <div class="alert alert-danger">
+                        {{ form.availability.errors }}
+                    </div>
+                {% endif %}
+                <label for="{{ form.availability.id_for_label }}" class="control-label">Availability</label>
+                {{ form.availability }}
+            </div>
+
+            <div class="form-group">
+                {% if form.birthday.errors %}
+                    <div class="alert alert-danger">
+                        {{ form.birthday.errors }}
+                    </div>
+                {% endif %}
+                <label for="{{ form.birthday.id_for_label }}" class="control-label">Birthday</label>
+                {{ form.birthday }}
+            </div>
+                <input type="submit" value="Save" class="btn btn-primary btn-lg" />
+
+        </form>
+    </div>
+</div>
+{% endblock panelbody %}
+
+{% block extra-js %}
+<script type="text/javascript" src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
+<script type="text/javascript">
+    $('#id_first_name').addClass('form-control')
+    $('#id_last_name').addClass('form-control')
+    $('#id_email').addClass('form-control')
+    $('#id_phone').addClass('form-control')
+    $('#id_gender').addClass('form-control')
+    $('#id_birthday').addClass('form-control')
+    $('#id_availability').addClass('form-control')
+    $('#id_birthday').datepicker({
+      //format: 'YYYY-MM-DD'
+    });
+</script>
+{% endblock extra-js %}

@@ -19,10 +19,14 @@ from django.conf import settings
 from django.contrib import admin
 from django.contrib.auth.views import login, logout_then_login
 from depot import views
+from heathen import views as heathen_views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^$', views.station_list, name='show_list'),
+    url(r'members/$', heathen_views.members, name='locations'),
+    url(r'addmember/(?P<id>\d+)/$', heathen_views.add_member, name='add_member'),
+    #url(r'^$', views.station_list, name='show_list'),
+    url(r'^$', heathen_views.members, name='locations'),
     url(r'add/(?P<station_id>\d+)/$', views.add_entry, name='update'),
     url(r'station/$', views.add_station, name='add_station'),
     url(r'api/', include('api.urls'),),

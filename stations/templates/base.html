@@ -58,7 +58,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" class="pull-left" href="/"><h3>V-Login</h3></a>
+                <a class="navbar-brand" class="pull-left" href="/"><h3>Heathen List</h3></a>
             </div>
             <!-- /.navbar-header -->
             <ul class="nav navbar-top-links navbar-right">
@@ -310,6 +310,7 @@
                             </div>
                             <!-- /input-group -->
                         </li>
+                        {% if user.is_authenticated %}
                         <li>
                         <a href="{% url 'dashboard' %}"><i class="fa fa-home fa-fw"></i> Home</a>
                         </li>
@@ -319,6 +320,7 @@
                         <li>
                         <a href="{% url 'reports' %}"><i class="fa fa-file fa-fw"></i> Reports</a>
                         </li>
+                        {% endif %}
                     </ul>
                 </div>
                 <!-- /.sidebar-collapse -->
