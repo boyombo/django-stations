@@ -9,6 +9,10 @@ class Industry(models.Model):
     def __unicode__(self):
         return self.name
 
+    class Meta:
+        verbose_name_plural = 'Industries'
+        ordering = ['name']
+
 
 class Location(models.Model):
     name = models.CharField(max_length=100)
