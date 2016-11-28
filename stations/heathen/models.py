@@ -24,6 +24,9 @@ class Location(models.Model):
     def member_count(self):
         return self.member_set.count()
 
+    class Meta:
+        ordering = ['name']
+
 
 class Member(models.Model):
     UNAVAILABLE = 0
