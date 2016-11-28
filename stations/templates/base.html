@@ -310,10 +310,10 @@
                             </div>
                             <!-- /input-group -->
                         </li>
-                        {% if user.is_authenticated %}
                         <li>
-                        <a href="{% url 'dashboard' %}"><i class="fa fa-home fa-fw"></i> Home</a>
+                        <a href="{% url 'locations' %}"><i class="fa fa-home fa-fw"></i> Home</a>
                         </li>
+                        {% if user.is_authenticated %}
                         <li>
                         <a href="{% url 'resident_list' %}"><i class="fa fa-users fa-fw"></i> Residents</a>
                         </li>

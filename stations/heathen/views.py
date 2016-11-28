@@ -1,12 +1,17 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
-from heathen.models import Location
+from heathen.models import Location, Member
 from heathen.forms import HeathenForm
 
 
 def members(request):
     locations = Location.objects.all()
-    return render(request, 'locations.html', {'locations': locations})
+    member_count = Member.objects.count()
+    return render(
+        request,
+        'locations.html',
+        {'locations': locations, 'total': member_count}
+    )
 
 
 def add_member(request, id):
