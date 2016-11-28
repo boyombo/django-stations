@@ -15,8 +15,7 @@ Register
 
 {% block panelbody %}
 <div class="row">
-    <div class="col-lg-4">
-        <form action="" method="post" role="form">{% csrf_token %}
+    <form action="" method="post" role="form">{% csrf_token %}
             {% if form.non_field_errors %}
                 {% for error in form.non_field_errors %}
                     <div class="alert alert-danger">
@@ -25,6 +24,7 @@ Register
                 {% endfor %}
             {% endif %}
 
+        <div class="col-lg-4">
             <div class="form-group">
                 {% if form.first_name.errors %}
                     <div class="alert alert-danger">
@@ -85,6 +85,18 @@ Register
                 {{ form.availability }}
             </div>
 
+
+        </div>
+        <div class="col-lg-4">
+            <div class="form-group">
+                {% if form.industry.errors %}
+                    <div class="alert alert-danger">
+                        {{ form.industry.errors }}
+                    </div>
+                {% endif %}
+                <label for="{{ form.industry.id_for_label }}" class="control-label">Industry</label>
+                {{ form.industry }}
+            </div>
             <div class="form-group">
                 {% if form.birthday.errors %}
                     <div class="alert alert-danger">
@@ -94,10 +106,38 @@ Register
                 <label for="{{ form.birthday.id_for_label }}" class="control-label">Birthday</label>
                 {{ form.birthday }}
             </div>
-                <input type="submit" value="Save" class="btn btn-primary btn-lg" />
+            <div class="form-group">
+                {% if form.nok_name.errors %}
+                    <div class="alert alert-danger">
+                        {{ form.nok_name.errors }}
+                    </div>
+                {% endif %}
+                <label for="{{ form.nok_name.id_for_label }}" class="control-label">Next of kin's Name</label>
+                {{ form.nok_name }}
+            </div>
+            <div class="form-group">
+                {% if form.nok_email.errors %}
+                    <div class="alert alert-danger">
+                        {{ form.nok_email.errors }}
+                    </div>
+                {% endif %}
+                <label for="{{ form.nok_email.id_for_label }}" class="control-label">Next of kin's Email</label>
+                {{ form.nok_email }}
+            </div>
 
-        </form>
-    </div>
+            <div class="form-group">
+                {% if form.nok_phone.errors %}
+                    <div class="alert alert-danger">
+                        {{ form.nok_phone.errors }}
+                    </div>
+                {% endif %}
+                <label for="{{ form.nok_phone.id_for_label }}" class="control-label">Next of kin's phone</label>
+                {{ form.nok_phone }}
+            </div>
+
+                <input type="submit" value="Save" class="btn btn-primary btn-lg block" />
+        </div>
+    </form>
 </div>
 {% endblock panelbody %}
 
@@ -110,6 +150,10 @@ Register
     $('#id_phone').addClass('form-control')
     $('#id_gender').addClass('form-control')
     $('#id_birthday').addClass('form-control')
+    $('#id_industry').addClass('form-control')
+    $('#id_nok_name').addClass('form-control')
+    $('#id_nok_email').addClass('form-control')
+    $('#id_nok_phone').addClass('form-control')
     $('#id_availability').addClass('form-control')
     $('#id_birthday').datepicker({
       //format: 'YYYY-MM-DD'

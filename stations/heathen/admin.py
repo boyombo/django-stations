@@ -1,9 +1,9 @@
 from django.contrib import admin
 
-from heathen.models import Location, Member
+from heathen.models import Location, Member, Industry
 
 
-@admin.register(Location)
+@admin.register(Location, Industry)
 class LocationAdmin(admin.ModelAdmin):
     list_display = ['name']
 
