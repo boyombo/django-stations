@@ -47,6 +47,7 @@ class Member(models.Model):
     nok_name = models.CharField(max_length=50, blank=True)
     nok_phone = models.CharField(max_length=20, blank=True)
     nok_email = models.EmailField(blank=True, null=True)
+    username = models.CharField(max_length=100, blank=True)
 
     def __unicode__(self):
         return self.email
