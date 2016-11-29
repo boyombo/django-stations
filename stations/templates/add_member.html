@@ -134,6 +134,15 @@ Register
                 <label for="{{ form.nok_phone.id_for_label }}" class="control-label">Next of kin's phone</label>
                 {{ form.nok_phone }}
             </div>
+            <div class="form-group">
+                {% if form.username.errors %}
+                    <div class="alert alert-danger">
+                        {{ form.username.errors }}
+                    </div>
+                {% endif %}
+                <label for="{{ form.username.id_for_label }}" class="control-label">Group Username</label>
+                {{ form.username }}
+            </div>
 
                 <input type="submit" value="Save" class="btn btn-primary btn-lg block" />
         </div>
@@ -155,6 +164,7 @@ Register
     $('#id_nok_email').addClass('form-control')
     $('#id_nok_phone').addClass('form-control')
     $('#id_availability').addClass('form-control')
+    $('#id_username').addClass('form-control')
     $('#id_birthday').datepicker({
       //format: 'YYYY-MM-DD'
     });
