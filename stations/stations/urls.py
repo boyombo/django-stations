@@ -30,6 +30,7 @@ urlpatterns = [
     url(r'add/(?P<station_id>\d+)/$', views.add_entry, name='update'),
     url(r'station/$', views.add_station, name='add_station'),
     url(r'api/', include('api.urls'),),
+    url(r'medic/', include('medic.urls'),),
     url(r'booking/', include('booking.urls'),),
     url(r'^accounts/login/$',
         login, {'template_name': 'login.html'}, name='login'),

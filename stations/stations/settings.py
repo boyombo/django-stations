@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'insure.apps.InsureConfig',
     'drugshare.apps.DrugshareConfig',
     'heathen.apps.HeathenConfig',
+    'medic.apps.MedicConfig',
 ]
 
 MIDDLEWARE_CLASSES = [
