@@ -195,7 +195,7 @@ def get_request_messages(req, mobile):
     for msg in Message.objects.filter(request=req):
         line = {
             'id': msg.id,
-            'from': msg.subscriber.phone,
+            'from': msg.subscriber.name,
             'location': msg.subscriber.location.name,
             'when': msg.when.strftime('%d %b %y %H:%M %p'),
             'text': msg.text
