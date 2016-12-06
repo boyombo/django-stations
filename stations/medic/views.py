@@ -40,6 +40,17 @@ def initdata(request):
     return HttpResponse(json.dumps(out))
 
 
+def get_stats(sub):
+    return {
+        'location': sub.location.name,
+        'blood_type': sub.blood_type.name,
+        'verified': 'true' if sub.verified else 'false',
+        'name': sub.name,
+        'count': Subscriber.objects.count(),
+        'loc_count': Subscriber.objects.filter(location=sub.location).count()
+    }
+
+
 @csrf_exempt
 def authenticate(request):
     if request.method == 'POST':
@@ -52,10 +63,8 @@ def authenticate(request):
                 'token': str(form.cleaned_data['username']),
                 'status': 'Ok',
                 'success': 'true',
-                'location': subscriber.location.name,
-                'blood_type': subscriber.blood_type.name,
-                'verified': 'true' if subscriber.verified else 'false'
             }
+            out.update(get_stats(subscriber))
             print out
             return HttpResponse(json.dumps(out))
         else:
@@ -71,6 +80,7 @@ def register(request):
     errors = {}
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
+        #import pdb;pdb.set_trace()
         if form.is_valid():
             # create user
             user = User.objects.create_user(
@@ -79,8 +89,9 @@ def register(request):
             # verification code
             code = '{}'.format(randrange(1234, 9899))
             # subscriber
-            Subscriber.objects.create(
+            subscriber = Subscriber.objects.create(
                 user=user,
+                name=form.cleaned_data['name'],
                 phone=form.cleaned_data['mobile'],
                 location=form.cleaned_data['location'],
                 blood_type=form.cleaned_data['blood_type'],
@@ -92,8 +103,10 @@ def register(request):
                 'status': 'Ok',
                 'success': 'true',
                 'location': form.cleaned_data['location'].name,
-                'blood_type': form.cleaned_data['blood_type'].name
+                'blood_type': form.cleaned_data['blood_type'].name,
+                'name': form.cleaned_data['name']
             }
+            out.update(get_stats(subscriber))
             print out
             mobile = form.cleaned_data['mobile']
             msg = 'Verification code for Med-Info is {}'.format(code)

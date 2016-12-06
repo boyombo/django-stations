@@ -36,6 +36,7 @@ class AuthForm(forms.Form):
 
 class RegistrationForm(forms.Form):
     mobile = forms.CharField(max_length=20)
+    name = forms.CharField(max_length=20)
     password = forms.CharField(max_length=50, required=True)
     location = forms.CharField(max_length=100)
     blood_type = forms.CharField(max_length=10)

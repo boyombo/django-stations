@@ -46,6 +46,7 @@ class Location(models.Model):
 
 class Subscriber(models.Model):
     phone = models.CharField(max_length=20, unique=True)
+    name = models.CharField(max_length=20, blank=True)
     user = models.ForeignKey(User)
     location = models.ForeignKey(Location)
     blood_type = models.ForeignKey(BloodType)
