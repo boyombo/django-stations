@@ -12,7 +12,8 @@ class LocationAdmin(admin.ModelAdmin):
 @admin.register(Subscriber)
 class SubscriberAdmin(admin.ModelAdmin):
     list_display = [
-        'user', 'location', 'blood_type', 'verified', 'verification_code']
+        'user', 'name', 'location', 'blood_type',
+        'verified', 'verification_code']
 
 
 @admin.register(BloodRequest)
