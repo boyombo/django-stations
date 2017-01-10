@@ -3,7 +3,7 @@ import json
 from django.http import HttpResponse
 from django.contrib.auth import authenticate
 #from django.contrib.auth.models import User
-from tax.models import Business, Payment
+from tax.models import Payment
 
 
 def json_response(params, success):
@@ -29,7 +29,7 @@ def search(request):
     try:
         payment = Payment.objects.get(payment_id=term)
     except Payment.DoesNotExist:
-        return json_response({'msg', 'Invalid Serial'}, False)
+        return json_response({'msg': 'Invalid Serial'}, False)
     else:
         params = {
             'name': payment.business.name,
