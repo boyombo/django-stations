@@ -24,6 +24,12 @@ class Business(models.Model):
     def __unicode__(self):
         return self.name
 
+    @property
+    def is_vehicle(self):
+        if self.licence_no and self.vehicle_type:
+            return 1
+        return 0
+
 
 class Payment(models.Model):
     payment_id = models.CharField('Serial', max_length=20, blank=True)
