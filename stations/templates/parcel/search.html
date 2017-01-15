@@ -1,0 +1,82 @@
+{% extends "parcel/base.html" %}
+{% load static from staticfiles %}
+
+{% block extra-css %}
+<link href="{% static 'css/dataTables.bootstrap.css' %}" rel="stylesheet">
+<link href="{% static 'css/dataTables.responsive.css' %}" rel="stylesheet">
+{% endblock extra-css %}
+
+{% block pageheader %}
+    <h1 class="page-header">Find Your Parcel</h1>
+{% endblock pageheader %}
+
+{% block panelheader %}
+Search
+{% endblock panelheader %}
+
+{% block panelbody %}
+<div class="row">
+<div class="col-sm-3"></div>
+<div class="col-sm-6">
+    <form method="post" action="">{% csrf_token %}
+        {% if form.waybill.errors %}
+        <div class="alert alert-danger">
+            {{ form.waybill.errors }}
+        </div>
+        {% endif %}
+        <div class="col-sm-8">
+            {{ form.waybill }}
+        </div>
+        <div class="col-sm-4"><input class="btn btn-primary" type="submit" value="Search" /></div>
+    </form>
+</div>
+<div class="col-sm-3"></div>
+</div>
+<div class="row">
+{% if parcel %}
+<div class="default-panel">
+    <div class="panel-body">
+<div class="table-responsive">
+    <table class="table table-striped table-bordered table-hover" id="dataTables-example">
+         <tbody>
+                                  <tr>
+                                      <th>Waybill #</th>
+                                      <td>{{ parcel.waybill }}</td>
+                                  </tr>
+                                  <tr>
+                                      <th>Description</th>
+                                      <td>{{ parcel.description }}</td>
+                                  </tr>
+                                  <tr>
+                                      <th>Origin</th>
+                                      <td>{{ parcel.loaded_from.address }}</td>
+                                  </tr>
+                                  <tr>
+                                      <th>Destination</th>
+                                      <td>{{ parcel.destination.address }}</td>
+                                  </tr>
+                                  <tr>
+                                      <th>Status</th>
+                                      <td>{{ parcel.get_status_display }}</td>
+                                  </tr>
+                                  <tr>
+                                      <th>Current Location</th>
+                                      <td>{{ parcel.current_location.address }}</td>
+                                  </tr>
+         </tbody>
+     </table>
+ </div>
+    </div>
+ </div>
+ {% endif %}
+</div>
+{% endblock panelbody %}
+
+{% block extra-js %}
+<script type="text/javascript" src="{% static 'js/jquery.dataTables.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/dataTables.bootstrap.min.js' %}"></script>
+<script type="text/javascript">
+$('#id_waybill').addClass('form-control');
+$('#id_waybill').attr('placeholder', 'Enter your waybill number');
+</script>
+{% endblock extra-js %}

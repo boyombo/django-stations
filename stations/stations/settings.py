@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'heathen.apps.HeathenConfig',
     'medic.apps.MedicConfig',
     'tax.apps.TaxConfig',
+    'parcel.apps.ParcelConfig',
 ]
 
 MIDDLEWARE_CLASSES = [

@@ -1,0 +1,82 @@
+{% extends "parcel/base.html" %}
+
+{% load static from staticfiles %}
+
+{% block pageheader %}
+    <h1 class="page-header">Pick Up</h1>
+{% endblock pageheader %}
+
+{% block panelheader %}
+Pickup
+{% endblock panelheader %}
+
+{% block panelbody %}
+<div class="row">
+<form action="" method="post" role="form">{% csrf_token %}
+    <div class="col-lg-6">
+    <div class="panel-default">
+            <fieldset>
+                <div class="default-panel">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <tbody>
+                                  <tr>
+                                      <th>Waybill #</th>
+                                      <td>{{ parcel.waybill }}</td>
+                                  </tr>
+                                  <tr>
+                                      <th>Description</th>
+                                      <td>{{ parcel.description }}</td>
+                                  </tr>
+                                  <tr>
+                                      <th>Origin</th>
+                                      <td>{{ parcel.loaded_from.address }}</td>
+                                  </tr>
+                                  <tr>
+                                      <th>Destination</th>
+                                      <td>{{ parcel.destination.address }}</td>
+                                  </tr>
+                                  <tr>
+                                      <th>Sender</th>
+                                      <td>{{ parcel.sender.name }}</td>
+                                  </tr>
+                                  <tr>
+                                      <th>Recipient</th>
+                                      <td>{{ parcel.recipient_name }}</td>
+                                  </tr>
+                                  <tr>
+                                      <th>Recipient Phone</th>
+                                      <td>{{ parcel.recipient_phone }}</td>
+                                  </tr>
+                                  <tr>
+                                      <th>Current Location</th>
+                                      <td>{{ parcel.current_location }}</td>
+                                  </tr>
+                                </tbody>
+                                <tfoot>
+                                </tfoot>
+
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                <input type="submit" value="Pick Up" class="btn btn-success btn-block" />
+                </div>
+            </fieldset>
+        </div>
+    </div>
+
+</form>
+</div>
+</div>
+{% endblock panelbody %}
+
+{% block extra-js %}
+<script type="text/javascript">
+    $('#id_location').addClass('form-control')
+    $('#id_vehicle').addClass('form-control')
+    $('#id_parcels').addClass('form-control')
+</script>
+{% endblock extra-js %}

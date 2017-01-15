@@ -1,0 +1,91 @@
+{% extends "parcel/base.html" %}
+
+{% load static from staticfiles %}
+
+{% block pageheader %}
+    <h1 class="page-header">Process Arrival</h1>
+{% endblock pageheader %}
+
+{% block panelheader %}
+Arrival
+{% endblock panelheader %}
+
+{% block panelbody %}
+<div class="row">
+<form action="" method="post" role="form">{% csrf_token %}
+            {% if form.non_field_errors %}
+                {% for error in form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+    <div class="col-lg-6">
+    <div class="panel-default">
+            <fieldset>
+                <div class="form-group">
+                        {% if form.location.errors %}
+                            <div class="alert alert-danger">
+                                {{ form.location.errors }}
+                            </div>
+                        {% endif %}
+                    <label for={{ form.location.id_for_label }} class="control-label">Arrival Location</label>
+                    {{ form.location }}
+                </div>
+                <div class="form-group">
+                        {% if form.vehicle.errors %}
+                            <div class="alert alert-danger">
+                                {{ form.vehicle.errors }}
+                            </div>
+                        {% endif %}
+                    <label for={{ form.vehicle.id_for_label }} class="control-label">Vehicle</label>
+                    {{ form.vehicle }}
+                </div>
+                <div class="default-panel">
+                    <div class="panel-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <caption>Select Parcels to offload</caption>
+                                <tr>
+                                    <th>Select</th>
+                                    <th>Waybill #</th>
+                                    <th>Description</th>
+                                    <th>Destination</th>
+                                </tr>
+                            {% for parcel in parcels %}
+                                <tr>
+                                    <td>
+                                            <input type="checkbox" name="parcels" value="{{parcel.id}}"></input>
+                                    </td>
+                                    <td>{{ parcel.waybill }}</td>
+                                    <td>{{ parcel.description }}</td>
+                                    <td>{{ parcel.destination.address }}</td>
+                                </tr>
+                            {% endfor %}
+                            </table>
+                        </div>
+                    </div>
+                    <div class="panel-footer">
+                        {{ parcels|length }} parcel{{parcels|pluralize}} available
+                    </div>
+                </div>
+                <div class="form-group">
+                <input type="submit" value="Load Vehicle" class="btn btn-success btn-block" />
+                </div>
+            </fieldset>
+        </div>
+    </div>
+
+</form>
+</div>
+</div>
+{% endblock panelbody %}
+
+{% block extra-js %}
+<script type="text/javascript">
+    $('#id_location').addClass('form-control')
+    $('#id_vehicle').addClass('form-control')
+    $('#id_parcels').addClass('form-control')
+</script>
+{% endblock extra-js %}

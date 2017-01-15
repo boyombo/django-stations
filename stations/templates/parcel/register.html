@@ -1,0 +1,200 @@
+{% extends "parcel/base.html" %}
+
+{% load static from staticfiles %}
+
+{% block pageheader %}
+    <h1 class="page-header">Register</h1>
+{% endblock pageheader %}
+
+{% block panelheader %}
+Register Parcel
+{% endblock panelheader %}
+
+{% block panelbody %}
+<div class="row">
+<form action="" method="post" role="form">{% csrf_token %}
+            {% if cform.non_field_errors %}
+                {% for error in cform.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {% if pform.non_field_errors %}
+                {% for error in pform.non_field_errors %}
+                    <div class="alert alert-danger">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+    <div class="col-lg-5">
+    <div class="panel-default">
+        <div class="panel-heading">Sender Details</div>
+        <div class="panel-body">
+            <fieldset>
+                <div class="form-group">
+                        {% if cform.name.errors %}
+                            <div class="alert alert-danger">
+                                {{ cform.name.errors }}
+                            </div>
+                        {% endif %}
+                    <label for={{ cform.name.id_for_label }} class="control-label">Name</label>
+                    {{ cform.name }}
+                </div>
+                <div class="form-group">
+                        {% if cform.phone.errors %}
+                            <div class="alert alert-danger">
+                                {{ cform.phone.errors }}
+                            </div>
+                        {% endif %}
+                    <label for={{ cform.phone.id_for_label }} class="control-label">Phone</label>
+                    {{ cform.phone }}
+                </div>
+                <div class="form-group">
+                        {% if cform.email.errors %}
+                            <div class="alert alert-danger">
+                                {{ cform.email.errors }}
+                            </div>
+                        {% endif %}
+                    <label for={{ cform.email.id_for_label }} class="control-label">Email</label>
+                    {{ cform.email }}
+                </div>
+                <div class="form-group">
+                        {% if cform.address.errors %}
+                            <div class="alert alert-danger">
+                                {{ cform.address.errors }}
+                            </div>
+                        {% endif %}
+                    <label for={{ cform.address.id_for_label }} class="control-label">Address</label>
+                    {{ cform.address }}
+                </div>
+            </fieldset>
+        </div>
+        </div>
+       <div class="panel-default">
+           <div class="panel-heading">Recipient Details</div>
+           <div class="panel-body">
+               <fieldset>
+                <div class="form-group">
+                        {% if pform.recipient_name.errors %}
+                            <div class="alert alert-danger">
+                                {{ pform.recipient_name.errors }}
+                            </div>
+                        {% endif %}
+                    <label for={{ pform.recipient_name.id_for_label }} class="control-label">Recipient Name</label>
+                    {{ pform.recipient_name }}
+                </div>
+                <div class="form-group">
+                        {% if pform.recipient_phone.errors %}
+                            <div class="alert alert-danger">
+                                {{ pform.recipient_phone.errors }}
+                            </div>
+                        {% endif %}
+                    <label for={{ pform.recipient_phone.id_for_label }} class="control-label">Recipient Phone</label>
+                    {{ pform.recipient_phone }}
+                </div>
+               </fieldset>
+           </div>
+       </div>
+
+    </div>
+    <div class="col-lg-1"></div>
+
+    <div class="col-lg-5">
+    <div class="panel-default">
+        <div class="panel-heading">Parcel Details</div>
+        <div class="panel-body">
+    <fieldset>
+        <div class="form-group">
+                {% if pform.waybill.errors %}
+                    <div class="alert alert-danger">
+                        {{ pform.waybill.errors }}
+                    </div>
+                {% endif %}
+            <label for={{ pform.waybill.id_for_label }} class="control-label">Waybill</label>
+            {{ pform.waybill }}
+        </div>
+        <div class="form-group">
+                {% if pform.description.errors %}
+                    <div class="alert alert-danger">
+                        {{ pform.description.errors }}
+                    </div>
+                {% endif %}
+            <label for={{ pform.description.id_for_label }} class="control-label">Description</label>
+            {{ pform.description }}
+        </div>
+        <div class="form-group">
+                {% if pform.loaded_from.errors %}
+                    <div class="alert alert-danger">
+                        {{ pform.loaded_from.errors }}
+                    </div>
+                {% endif %}
+            <label for={{ pform.loaded_from.id_for_label }} class="control-label">Loaded From</label>
+            {{ pform.loaded_from }}
+        </div>
+        <div class="form-group">
+                {% if pform.destination.errors %}
+                    <div class="alert alert-danger">
+                        {{ pform.destination.errors }}
+                    </div>
+                {% endif %}
+            <label for={{ pform.destination.id_for_label }} class="control-label">Destination</label>
+            {{ pform.destination }}
+        </div>
+        <div class="form-group">
+                {% if pform.cost.errors %}
+                    <div class="alert alert-danger">
+                        {{ pform.cost.errors }}
+                    </div>
+                {% endif %}
+            <label for={{ pform.cost.id_for_label }} class="control-label">Cost</label>
+            {{ pform.cost }}
+        </div>
+        <div class="form-group">
+                {% if pform.vehicle.errors %}
+                    <div class="alert alert-danger">
+                        {{ pform.vehicle.errors }}
+                    </div>
+                {% endif %}
+            <label for={{ pform.vehicle.id_for_label }} class="control-label">Vehicle</label>
+            {{ pform.vehicle }}
+        </div>
+        <div class="form-group">
+                {% if pform.batch_number.errors %}
+                    <div class="alert alert-danger">
+                        {{ pform.batch_number.errors }}
+                    </div>
+                {% endif %}
+            <label for={{ pform.batch_number.id_for_label }} class="control-label">Batch #</label>
+            {{ pform.batch_number }}
+        </div>
+        <input type="submit" value="Register Parcel" class="btn btn-success btn-block" />
+    </fieldset>
+        </div>
+    </div>
+    </div>
+</form>
+</div>
+</div>
+{% endblock panelbody %}
+
+{% block extra-js %}
+<script type="text/javascript">
+    $('#id_name').addClass('form-control')
+    $('#id_phone').addClass('form-control')
+    $('#id_email').addClass('form-control')
+    $('#id_address').addClass('form-control')
+    $('#id_username').addClass('form-control')
+    $('#id_waybill').addClass('form-control')
+    $('#id_description').addClass('form-control')
+    $('#id_recipient_name').addClass('form-control')
+    $('#id_recipient_phone').addClass('form-control')
+    $('#id_loaded_from').addClass('form-control')
+    $('#id_destination').addClass('form-control')
+    $('#id_current_location').addClass('form-control')
+    $('#id_cost').addClass('form-control')
+    $('#id_vehicle').addClass('form-control')
+    $('#id_batch_number').addClass('form-control')
+</script>
+{% endblock extra-js %}

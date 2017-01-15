@@ -29,7 +29,7 @@ def search(request):
     try:
         payment = Payment.objects.get(payment_id=term)
     except Payment.DoesNotExist:
-        return json_response({'msg': 'Invalid Serial'}, False)
+        return json_response({'error': 'Invalid Serial'}, False)
     else:
         params = {
             'name': payment.business.name,
