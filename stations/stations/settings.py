@@ -25,7 +25,7 @@ SECRET_KEY = '!jgfz$%dd*s)^21(q639&&^%x#%x!xhc72onq*_)2bepr^o)&3'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['www.fuel.basementlabs.com.ng', 'fuel.basementlabs.com.ng']
+ALLOWED_HOSTS = ['www.fuel.basementlabs.com.ng', 'fuel.basementlabs.com.ng', 'lab.clearcode.com.ng']
 
 
 # Application definition
