@@ -28,8 +28,8 @@ def register(request):
             parcel.current_location = parcel.loaded_from
             parcel.status = Parcel.LOADING
             parcel.save()
-            msg = 'A parcel has been sent to you from {}. Waybill number is {}'.format(
-                parcel.sender.name, parcel.waybill)
+            msg = 'A parcel has been sent to {} for you from {}. Waybill number is {}'.format(
+                parcel.loaded_from.address, parcel.sender.name, parcel.waybill)
             to = format_number(parcel.recipient_phone)
             send_message(to, msg, sender='Parceler')
             messages.success(request, 'Successfully registered parcel')
