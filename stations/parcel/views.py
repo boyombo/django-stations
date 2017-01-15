@@ -5,6 +5,16 @@ from django.utils import timezone
 from parcel.forms import ClientForm, ParcelForm, LoadForm, ArrivalForm,\
     SearchForm, StatusForm
 from parcel.models import Parcel
+from api.sms import send_message
+
+
+def format_number(num):
+    if len(num) == 11 and num.startswith('0'):
+        return '234{}'.format(num[1:])
+    elif len(num) == 10:
+        return '234{}'.format(num)
+    else:
+        return num
 
 
 def register(request):
@@ -18,6 +28,10 @@ def register(request):
             parcel.current_location = parcel.loaded_from
             parcel.status = Parcel.LOADING
             parcel.save()
+            msg = 'A parcel has been sent to you from {}. Waybill number is {}'.format(
+                parcel.sender.name, parcel.waybill)
+            to = format_number(parcel.recipient_phone)
+            send_message(to, msg, sender='Parceler')
             messages.success(request, 'Successfully registered parcel')
             return redirect('parcel_register')
     else:
@@ -65,6 +79,13 @@ def arrival(request):
             vehicle.location = location
             vehicle.in_transit = False
             vehicle.save()
+            # send messages
+            for parcel in parcels:
+                msg = 'Your parcel with waybill number {} has arrived in {}. Please come with this sms to claim the item'.format(
+                    parcel.waybill, parcel.current_location.address)
+                to = format_number(parcel.recipient_phone)
+                send_message(to, msg, sender='Parceler')
+
             messages.success(request, 'Successfully processed parcel')
             return redirect('parcel_arrival')
     else:
@@ -93,6 +114,10 @@ def pickup(request, id):
     if request.method == 'POST':
         parcel.status = Parcel.COLLECTED
         parcel.save()
+        msg = 'The parcel you sent to {} with waybill number {} has been collected.'.format(
+            parcel.recipient_name, parcel.waybill)
+        to = format_number(parcel.client.phone)
+        send_message(to, msg, sender='Parceler')
         messages.success(request, 'Parcel collected successfully')
         return redirect('parcel_arrived')
     return render(
