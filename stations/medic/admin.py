@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from medic.models import BloodType, Location, Subscriber, BloodRequest,\
-    Message, Candidate
+    Message, Candidate, BloodBank
 
 
 @admin.register(BloodType, Location)
@@ -29,3 +29,8 @@ class MessageAdmin(admin.ModelAdmin):
 @admin.register(Candidate)
 class CandidateAdmin(admin.ModelAdmin):
     list_display = ['blood_request', 'subscriber', 'active']
+
+
+@admin.register(BloodBank)
+class BloodBankAdmin(admin.ModelAdmin):
+    list_display = ['name', 'address', 'location', 'latitude']
