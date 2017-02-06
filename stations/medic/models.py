@@ -90,3 +90,14 @@ class Candidate(models.Model):
     @property
     def owner(self):
         return self.subscriber == self.blood_request.subscriber
+
+
+class BloodBank(models.Model):
+    name = models.CharField(max_length=200)
+    address = models.TextField(blank=True)
+    location = models.ForeignKey(Location)
+    latitude = models.CharField(max_length=50, blank=True)
+    longitude = models.CharField(max_length=50, blank=True)
+
+    def __unicode__(self):
+        return self.name
