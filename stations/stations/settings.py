@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'medic.apps.MedicConfig',
     'tax.apps.TaxConfig',
     'parcel.apps.ParcelConfig',
+    'jamb.apps.JambConfig',
 ]
 
 MIDDLEWARE_CLASSES = [
